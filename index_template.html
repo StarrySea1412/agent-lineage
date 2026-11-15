@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="造物手记 VOL.15 · 给 Agent 修家谱——从 Clawdbot 到 OpenClaw 的三级跳，到 Cowork 们的收拢与 Atlas 的关停：四代家谱、一条分水岭、四条为什么不缝合的结构性原因。"/>
+<title>给 Agent 修家谱 · 造物手记 VOL.15</title>
+{{STYLE}}
+</head>
+<body>
+
+<header class="wrap masthead">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="2.6" stroke="#333e48" stroke-width="1.4"/><circle cx="6.5" cy="17" r="2.6" stroke="#333e48" stroke-width="1.4"/><circle cx="17.5" cy="17" r="2.6" stroke="#333e48" stroke-width="1.4"/><path d="M10.8 8.2 7.6 14.8M13.2 8.2l3.2 6.6" stroke="#333e48" stroke-width="1.1"/></svg></span>
+    <span>造物手记 <small>VOL.15</small></span>
+  </div>
+  <div class="edition">
+    <span class="pack"><i class="pack-dot" aria-hidden="true"></i>GENEALOGY CHART / 谱系图</span>
+    <span>BOARD 15 · 2026.11</span>
+  </div>
+</header>
+
+<section class="wrap hero">
+  <div>
+    <p class="eyebrow"><span>FIELD NOTES</span>一次族谱式的盘点</p>
+    <h1>给 Agent<br/><em>修家谱</em><span class="sub">从 Clawdbot 到 OpenClaw 的三级跳，到 Cowork 们的收拢与 Atlas 的关停——一张四代家谱、一条分水岭、两代同物种的分化、四条"为什么不缝合"的结构性原因；四枚互动小样全部确定性，时间线与判定表可重放</span></h1>
+    <div class="dek-wrap">
+      <p class="dek-tag">本篇提要</p>
+      <p class="dek">2026 年被叫作「AI 助手变 Agent 之年」：一月 Anthropic 放出 Cowork，三月 Microsoft 借力跟进，七月 OpenAI 补位，八月它自己的浏览器项目关停——大厂在收拢，开源在分化，一只改名三次的龙虾依然活着。为什么没有人把所有优点缝成一个产品？本篇画一张家谱：四代 agent 的分水岭画在哪里、同物种为何分岔出两种进化、大厂的结构性天花板长什么样，以及我们的 Easel 在这张图上站在哪。</p>
+    </div>
+    <div class="hero-meta">
+      <span class="pill"><b>5</b> 章 · 4 枚互动</span>
+      <span class="pill"><b>3</b> 次改名 · 零次架构死亡</span>
+      <span class="pill"><b>4</b> 代家谱 · 1 条分水岭</span>
+      <span class="pill"><b>5</b> 条大厂时间线 · 逐条有日期</span>
+    </div>
+  </div>
+  <figure class="art">
+    <div class="screen">
+      <div class="screen-img">
+        <img src="assets/art/hero.webp" alt="单眼折纸鸟族谱绘制员站在家谱墙前，墙上相框里是龙虾、纸鹤、云朵、终端四种小机器肖像，鸟持教杆指向龙虾相框" width="1152" height="832"/>
+      </div>
+      <div class="tc-bar"><span>BOARD 15</span><span class="tc">ORIGIN · FOUR GENERATIONS · TWO EVOLUTIONS · BIG TECH</span></div>
+    </div>
+    <figcaption><span><b>FIG. 00</b> 一面家谱墙：每个相框里住着一种「替你做事」的形态</span><span>INK &amp; GOUACHE / 2026</span></figcaption>
+  </figure>
+  <div>
+    <p class="dek" style="margin-top:26px">画这张家谱的动机不是怀旧。2026 年 11 月的今天，"AI 会做事"已经从口号变成货架：上游 OpenClaw 的版本列车开到了 2026.11.3，我们的 Easel 就停靠在它的分支线上（VOL.14 的五起事故还挂在台账上）。要在这样的年份里决定「接谁的底座、跟哪条线走」，先得有一张谱——不然每次选型都像第一次见到这个东西。</p>
+    <p class="scope">标本 · 本篇为生态盘点，非代码解剖；全部日期与事件核对到官方 releases、Wikipedia、Forbes/Fortune 报道与对比文（Firecrawl / innfactory / Composio），口径详见各章标注。<br/>四枚小样全部确定性：时间线、判定表、互斥矩阵均照抄文中表格，参数摊在明面上，可重置重放。</p>
+    <div class="toc-head"><span>CONTENTS · 五段谱系</span><span>ORIGIN → FOUR GENERATIONS → TWO EVOLUTIONS → BIG TECH → OUR BRANCH</span></div>
+    <nav class="toc">
+      <a href="#ch1"><i>01</i><span>一只龙虾的三级跳<small>Clawdbot→Moltbot→OpenClaw：名字死了三次，架构一次没死</small></span></a>
+      <a href="#ch2"><i>02</i><span>四代家谱，一条分水岭<small>凭证和运行环境归谁，比功能清单更能预测一个产品的行为</small></span></a>
+      <a href="#ch3"><i>03</i><span>同物种的两种进化<small>OpenClaw 与 Hermes：常驻助理与自进化便携，方向相反合并即两伤</small></span></a>
+      <a href="#ch4"><i>04</i><span>大厂为什么不缝合<small>Cowork 领跑、Atlas 关停：四条结构性原因，条条有日期</small></span></a>
+      <a href="#ch5"><i>05</i><span>我们站在哪<small>Easel 在家谱上的位置，与接入前三问的续篇</small></span></a>
+    </nav>
+  </div>
+</section>
+
+<section class="wrap stats" aria-label="关键数字">
+  <div class="wrap stats-inner">
+    <div class="stat"><b>3<span>次改名</span></b><small>Clawdbot→Moltbot→OpenClaw（2025.11–2026.01），壳换了三次，动物没死</small></div>
+    <div class="stat"><b>4<span>代</span></b><small>聊天 bot / 编程 agent / 云端 computer-use / 个人 agent，分水岭=凭证归属</small></div>
+    <div class="stat"><b>&lt;10<span>个月</span></b><small>ChatGPT Atlas 从上线（2025-10-21）到关停（2026-08-09）的全部寿命</small></div>
+    <div class="stat"><b>10–20<span>%</span></b><small>对比文口径：OpenClaw 同任务相对 Hermes 的 token 消耗差</small></div>
+  </div>
+</section>
+
+<main>
+
+<section class="chapter" id="ch1">
+  <div class="ch-head">
+    <div class="ch-num"><b>01</b>CHAPTER<br/>00:00</div>
+    <div class="ch-title">
+      <h2>一只龙虾的三级跳</h2>
+      <p>Clawdbot→Moltbot→OpenClaw：三次改名三次蜕壳——壳换了，动物没死</p>
+    </div>
+  </div>
+  <div class="ch-body">
+    <p class="lede">2025 年 11 月，Peter Steinberger——PSPDFKit 创始人、iOS 圈的老兵——发布了一个开源项目，名字叫 Clawdbot。理念一句话：AI 不该只会聊天，该替你管日历、订机票、跑任务。2026 年 1 月，它病毒式爆红；然后两个月里，它换了三次名字。</p>
+    <table class="tbl">
+      <tr><th>时间</th><th>事件</th><th>出处</th></tr>
+      <tr><td>2025-11</td><td><b>Clawdbot</b> 发布</td><td>Wikipedia · OpenClaw</td></tr>
+      <tr><td>2026-01</td><td>病毒式爆红，「真的会做事」出圈</td><td>同上</td></tr>
+      <tr><td>2026-01-27</td><td>商标压力下仓促改名 <b>Moltbot</b>——作者后来自认「不太顺口」</td><td>Forbes · dev.to 回顾</td></tr>
+      <tr><td>2026-01-30</td><td>再度改名 <b>OpenClaw</b>，社区争议、域名被抢注</td><td>Forbes（01-30）</td></tr>
+      <tr><td>2026-03</td><td>正式公开发布，龙虾 🦞 定妆：「The lobster way」</td><td>对比文口径</td></tr>
+      <tr><td>2026 中</td><td>作者被 OpenAI 挖走；项目由社区接管，release 列车照常发车</td><td>Wikipedia · releases</td></tr>
+      <tr><td>2026-11-11</td><td>版本列车开到 <b>2026.11.3</b>（另有 2026.9.37 extended-stable LTS 线）</td><td>npm · releases 页</td></tr>
+    </table>
+    <div class="fig"><div class="frame"><img src="assets/art/ch1.webp" alt="三件龙虾外壳标本从旧到新挂在木衣架上，折纸鸟扶梯子挂最新一只，地上散落脱落的旧壳碎片" width="1152" height="832" loading="lazy" style="width:100%;border:1px solid var(--line)"/></div><figcaption><span><b>FIG. 01</b> molt，本义蜕壳：壳换了三次，动物一直是那只</span><span>INK &amp; GOUACHE / 2026</span></figcaption></div>
+    <p>OpenClaw 这个名字不是随手起的——molt 是龙虾蜕壳的本义，改名史活成了一则生物学寓言：<b>壳是会被迫更换的，肉不会。</b>值得盯着的还有 release 列车的成色：每一版都挂着完整的审计件——npm preflight、release CI 报告、完整性 sha512、逐 PR 的贡献记录（本文第 04 章引用的几条修复原文即出自这套台账）。一个被挖走创始人的社区项目，把工程纪律守到了比多数商业产品更严的程度。</p>
+    <div class="demo" id="d1">
+      <div class="demo-head"><span class="demo-tag">DEMO 01 · 三级跳时间线</span><span class="demo-title">七站重放<span class="hint">按「下一站」逐站推进</span></span></div>
+      <div class="demo-body">
+        <div class="g1-stop"><div class="g1-date" id="g1-date">2025-11</div><div class="g1-name" id="g1-name">Clawdbot 发布</div><div class="g1-note" id="g1-note">Peter Steinberger 发布开源个人 agent；「AI 该替你做事，不该只会聊天」</div></div>
+        <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>timeline</span></div><pre id="g1-log">2025-11 ── 2026-11-11，共 7 站。点「下一站」。</pre></div>
+        <div class="readout"><span>当前壳名：<b id="g1-shell">Clawdbot</b></span><span>架构状态：<b>未变</b></span></div>
+        <div><button class="ghost" id="g1-next">下一站</button> <button class="ghost" id="g1-reset">重置</button></div>
+      </div>
+      <div class="demo-foot">确定性推演：七站日期与事件照抄 Wikipedia / Forbes / 官方 releases，无随机。值得看的不是日期本身，是「壳名」一栏换了三次而「架构状态」一栏始终未变。重置后可重放。</div>
+    </div>
+    <p><b>一个改了三次名字的项目，为什么没有死？</b>把「改名」拆开看：第一次是法律强迫（商标太像 Claude），第二次是仓促补救，第三次是社区吵出来的。三次都动了壳，没一次动肉——自托管（跑在用户自己的机器上）、开源（任何人可审计）、凭证归用户（数据不进别人家的保险柜），这三根契约一根都没断。名字是壳，契约是肉。反过来想：一个只有名字没有契约的产品，改名一次就散了——2026 年的 agent 赛道上，这样的壳我们见过不少。</p>
+  </div>
+</section>
+
+<section class="chapter" id="ch2">
+  <div class="ch-head">
+    <div class="ch-num"><b>02</b>CHAPTER<br/>00:01</div>
+    <div class="ch-title">
+      <h2>四代家谱，一条分水岭</h2>
+      <p>「会做事的 AI」不是一代产品，是四代——分水岭只有一条：凭证和运行环境归谁</p>
+    </div>
+  </div>
+  <div class="ch-body">
+    <p class="lede">把 2026 年货架上所有「替你做事的 AI」摊开，家谱不该按公司画——公司会倒、会改名、会互相借模型（Microsoft 用 Anthropic 的模型做 Copilot Cowork 就是现成例子）。按<b>凭证和运行环境的归属</b>画，四代立刻清晰：</p>
+    <table class="tbl">
+      <tr><th>代</th><th>代表</th><th>跑在哪</th><th>凭证归谁</th><th>典型边界</th></tr>
+      <tr><td><b>第一代</b> 聊天 bot</td><td>ChatGPT、Claude.ai、豆包</td><td>厂商云</td><td>厂商</td><td>对话与云端工具，碰不到你的设备</td></tr>
+      <tr><td><b>第二代</b> 编程 agent</td><td>Claude Code、Codex、ZCode、OpenCode、DeepSeek Harness</td><td>你的终端/IDE</td><td>你（仓库级）</td><td>出不了代码圈：仓库是工作区</td></tr>
+      <tr><td><b>第三代</b> 云端 computer-use</td><td>Manus、Grok Bot（云端）</td><td>厂商虚拟机</td><td>厂商代持</td><td>替你操作，但在别人家的机器上</td></tr>
+      <tr><td><b>第四代</b> 个人 agent</td><td>OpenClaw、Hermes Agent</td><td><b>你自己的设备</b></td><td><b>你</b></td><td>渠道、记忆、定时任务、台账全在你家</td></tr>
+    </table>
+    <div class="fig"><div class="frame"><img src="assets/art/ch2.webp" alt="四扇并排木门各挂彩色门牌，第三扇半开透出暖光，折纸鸟捧着一大串钥匙辨认" width="1152" height="832" loading="lazy" style="width:100%;border:1px solid var(--line)"/></div><figcaption><span><b>FIG. 02</b> 四扇门四串凭证：分水岭不在门里有多少功能，在钥匙给谁</span><span>INK &amp; GOUACHE / 2026</span></figcaption></div>
+    <p>第二代的家族成员有一份现成的活证据。还记得 VOL.14 里那条 200 谎报的拒绝文案吗？渠道商把白名单写在正文里——<em>Codex、Claude Code、OpenCode、Magpie、DeepSeek Harness、ZCode、Pi、Oh My Pi</em>——八个名字全是终端形态的编程 agent。<b>渠道商已经替我们画好了第二代的家谱</b>：他们按客户端形态放行，因为这个家族共享同一种工作模式（在仓库里、以用户自己的额度）。</p>
+    <p>第四代则是 2026 年真正的新物种。它不只是「更聪明」——它有一套前三代都没有的器官：消息渠道矩阵（WhatsApp/Telegram/iMessage/Slack…）、设备配对、持久记忆、定时任务、技能市场、启动台账。VOL.14 里那些给我们惹祸的 boot 台账、profile 锁、设备配对表，全是这套器官的骨头。</p>
+    <p>同时，大厂在 2026 年给出了另一侧的时间线——收拢之年：</p>
+    <table class="tbl">
+      <tr><th>日期</th><th>事件</th><th>一句话</th></tr>
+      <tr><td>2026-01-12/13</td><td><b>Claude Cowork</b> 发布</td><td>面向非技术知识工作者的桌面通用 agent，官方插件生态 + 记忆</td></tr>
+      <tr><td>2026-03-09</td><td><b>Copilot Cowork</b> 发布</td><td>Microsoft 借 Anthropic 的 agentic 模型 + M365，企业托管</td></tr>
+      <tr><td>2026-07</td><td><b>ChatGPT Work</b> 推出</td><td>OpenAI 进入被 Cowork 占据的企业 agent 市场</td></tr>
+      <tr><td>2026-08-09</td><td><b>ChatGPT Atlas 关停</b></td><td>2025-10-21 上线的 agent 浏览器，寿命不足 10 个月</td></tr>
+      <tr><td>2026-10-21</td><td><b>Claude Duet</b> 研究预览</td><td>从被动响应走向主动式个人助理</td></tr>
+    </table>
+    <p>大厂在收拢（Operator 并回主应用、Atlas 关停、能力收进 ChatGPT/Codex），开源在分化（OpenClaw 的版本列车、Hermes 的新物种）。家谱的两条主干在朝相反方向生长。</p>
+    <div class="demo" id="d2">
+      <div class="demo-head"><span class="demo-tag">DEMO 02 · 代际分诊器</span><span class="demo-title">三问定代<span class="hint">点一张产品卡，看它落在第几代</span></span></div>
+      <div class="demo-body">
+        <div class="g2-cards">
+          <button class="g2-card" data-g="1">ChatGPT</button><button class="g2-card" data-g="1">Claude.ai</button><button class="g2-card" data-g="1">豆包</button>
+          <button class="g2-card" data-g="2">Claude Code</button><button class="g2-card" data-g="2">Codex</button><button class="g2-card" data-g="2">ZCode</button>
+          <button class="g2-card" data-g="3">Manus</button><button class="g2-card" data-g="3">Grok Bot（云端）</button>
+          <button class="g2-card" data-g="4">OpenClaw</button><button class="g2-card" data-g="4">Hermes Agent</button>
+        </div>
+        <div class="g2-q">
+          <div class="g2-qrow"><span>问一 · 跑在哪？</span><b id="g2-a1">——</b></div>
+          <div class="g2-qrow"><span>问二 · 凭证归谁？</span><b id="g2-a2">——</b></div>
+          <div class="g2-qrow"><span>问三 · 出勤谁负责？</span><b id="g2-a3">——</b></div>
+        </div>
+        <div class="readout"><span>判定：<b id="g2-verdict">点一张产品卡开始</b></span></div>
+        <div><button class="ghost" id="g2-reset">重置</button></div>
+      </div>
+      <div class="demo-foot">确定性判定：三问答案照抄本章家谱表；Grok Bot 按 2026-08 上线的云端 computer-use 口径归第三代。「第四代」的判定要点是三问同时归你——只归一项不算。判定表固定，可重放。</div>
+    </div>
+    <p><b>为什么分水岭是「凭证归属」而不是「谁更聪明」？</b>因为能力可以租，信任不能租。一个产品替你做事的深度，取决于你敢把多少凭证交给它；凭证交出去之后锁在谁的柜子里，决定了它在处理你最私人的任务时遵循谁的规则。聪明度每季度刷新一次，归属十年不动——所以预测一个产品的长期行为，看归属比看跑分准得多。</p>
+  </div>
+</section>
+
+<section class="chapter" id="ch3">
+  <div class="ch-head">
+    <div class="ch-num"><b>03</b>CHAPTER<br/>00:02</div>
+    <div class="ch-title">
+      <h2>同物种的两种进化</h2>
+      <p>OpenClaw 与 Hermes：同样的自托管、同样的开源，却往相反的方向跑</p>
+    </div>
+  </div>
+  <div class="ch-body">
+    <p class="lede">家谱第四代里有两个名字最像：同样的自托管、同样的 MIT/开源、同样的「替你做事」。OpenClaw 与 Hermes Agent（Nous Research，2026 年 2 月发布）像一对同物种，却在技能与记忆两条主干上长出了不同的器官。</p>
+    <table class="tbl">
+      <tr><th></th><th>OpenClaw</th><th>Hermes Agent</th></tr>
+      <tr><td>出身</td><td>2026-01 定名（Clawdbot 2025-11 起家），社区接管</td><td>Nous Research，2026-02，MIT 一次到位</td></tr>
+      <tr><td>定位</td><td><b>常驻助理</b>：多渠道接入 + 渠道矩阵 + 设备配对</td><td><b>便携自进化</b>：从经验自造技能的学习闭环</td></tr>
+      <tr><td>技能</td><td>预置技能市场（ClawHub），预建技能更多</td><td>用得越多自己写得越多（learning loop）</td></tr>
+      <tr><td>效率</td><td>对比文口径：同任务省 10–20% token</td><td>运行成本更低</td></tr>
+      <tr><td>托管</td><td>无官方托管</td><td>可选 Hermes Cloud 常驻实例</td></tr>
+      <tr><td>蜕壳史</td><td>改名三次</td><td>一次到位</td></tr>
+    </table>
+    <div class="fig"><div class="frame"><img src="assets/art/ch3.webp" alt="两条环形跑道上两只折纸鸟：左边边跑边贴便签，右边端着装满工具的托盘平稳地跑" width="1152" height="832" loading="lazy" style="width:100%;border:1px solid var(--line)"/></div><figcaption><span><b>FIG. 03</b> 一只往墙上贴自己写的便签，一只端着别人验收过的托盘</span><span>INK &amp; GOUACHE / 2026</span></figcaption></div>
+    <p><b>两种进化为什么不合并？</b>关键在产出物的可审计性。学习闭环写出来的技能是它自己创作的——好用，但每一件都不可预先审计；而常驻助理的核心价值恰恰是可审计、可回滚：VOL.12 里那台巡检 Agent 的每道闸、VOL.14 里那张 boot 台账，逻辑都建立在「行为可以预先框定」上。往「越用越强」跑和往「越用越可信」跑是两个方向——硬合并，两边都要打折。</p>
+    <div class="note">Easel 的选择写在 VOL.10 和 VOL.14 里：借 OpenClaw 当底座，看中的是渠道矩阵、多模型路由和可审计的执行器。Hermes 的学习闭环是将来值得偷的思路，不是现在值得换的底座。</div>
+  </div>
+</section>
+
+<section class="chapter" id="ch4">
+  <div class="ch-head">
+    <div class="ch-num"><b>04</b>CHAPTER<br/>00:03</div>
+    <div class="ch-title">
+      <h2>大厂为什么不缝合</h2>
+      <p>Cowork 领跑、Atlas 关停：这个问题的答案在 2026 年不是推理，是实录</p>
+    </div>
+  </div>
+  <div class="ch-body">
+    <p class="lede">「把所有优点缝成一个产品」听上去像大厂迟早会做的事——他们有算力、人才、钱包。2026 年这一整年，四家大厂用四次不同方向的尝试，把答案写在了新闻里。结论先行：<b>缝合的失败不是能力失败，是形态失败</b>。</p>
+    <div class="fig"><div class="frame"><img src="assets/art/ch4.webp" alt="长餐桌上五盘风格迥异的招牌菜，任意两盘之间画着同极磁铁相斥符号，折纸鸟厨师双手摊开" width="1152" height="832" loading="lazy" style="width:100%;border:1px solid var(--line)"/></div><figcaption><span><b>FIG. 04</b> 五盘好菜推到一张桌上，盘与盘之间开始相斥</span><span>INK &amp; GOUACHE / 2026</span></figcaption></div>
+    <h3>四条结构性原因，条条有出处</h3>
+    <p><b>① 商业模式对立。</b>个人 agent 的核心优点——自托管、用你自己的 Key、凭证不出门——每一条都在瓦解订阅与推理计费。OpenClaw 没有官方托管（对比文原话），不是做不到，是不敢做：做了就变成自己卖自己的平替。所以大厂版的「个人 agent」全是云端形态：Claude Cowork 接记忆与插件，Copilot Cowork 挂 M365，全部可计费。</p>
+    <p><b>② 责任与合规。</b>用真实账号替人订票、发帖、支付，出错算谁的？开源社区可以说风险自担，大厂面对的是企业法务与监管。于是每个大厂版都要加审批流、沙箱、Watch Mode——每加一道闸，离「丝滑全能」远一步。</p>
+    <p><b>③ 优点互斥。</b>Hermes 的自进化不可预先审计，与企业级可审计冲突；OpenClaw 的多模型自由路由与单一供应商计费冲突；浏览器专项深度（browser-use 类）与平台广度冲突——专，是快的来源，也是合不进来的原因。</p>
+    <p><b>④ 集成复杂度。</b>每接一层别人的能力，就背一层别人的状态机——这句话的完整证据链在 VOL.14：boot 台账、profile 锁、PID 复用、渠道白名单、重试预算，五起事故全是缝合处的崩开。大厂内部算的账更直白：与其缝五家最好的部分背五份债，不如垂直整合自家一整套背一份债。</p>
+    <div class="demo" id="d3">
+      <div class="demo-head"><span class="demo-tag">DEMO 03 · 缝合冲突矩阵</span><span class="demo-title">选两样试试<span class="hint">点选两项能力，互斥就亮红</span></span></div>
+      <div class="demo-body">
+        <div class="g3-chips">
+          <button class="g3-chip" data-k="host">自托管</button>
+          <button class="g3-chip" data-k="learn">自进化学习闭环</button>
+          <button class="g3-chip" data-k="multi">多模型自由路由</button>
+          <button class="g3-chip" data-k="browser">浏览器专项深度</button>
+          <button class="g3-chip" data-k="audit">企业级可审计</button>
+          <button class="g3-chip" data-k="full">全权代理</button>
+        </div>
+        <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>conflict</span></div><pre id="g3-log">选中两项，看它们之间是握手还是相斥。</pre></div>
+        <div class="readout"><span>已选：<b id="g3-n">0/2</b></span><span>判定：<b id="g3-verdict">——</b></span></div>
+        <div><button class="ghost" id="g3-reset">重置</button></div>
+      </div>
+      <div class="demo-foot">确定性矩阵：互斥对与理由照抄本章①③两条（自进化↔可审计、自托管↔计费收拢、全权代理↔可审计、专项↔广度）；不互斥的组合给中性结论。判定固定，可重放。</div>
+    </div>
+    <p><b>Atlas 之死说明了什么？</b>一家最有资格「缝合」的公司（算力、人才、钱包全齐），把一个聚合了浏览器与 agent 的产品养了不足十个月，然后亲手关停，官方口径是「浏览器是功能，不是目的地」。这不是能力翻车——是形态翻车：<b>目的地决定形态，而大厂的目的地是收拢回主应用</b>，因为只有收拢才能计费。2026-07 推出 ChatGPT Work 补位企业市场、10 月 Anthropic 转向「主动式」的 Duet 研究预览——每一步都在收拢的方向上。市场图谱今年已收录约 150 家公司、16 个层级，而「全能缝合怪」在这个图谱里没有格子可放。</p>
+  </div>
+</section>
+
+<section class="chapter" id="ch5">
+  <div class="ch-head">
+    <div class="ch-num"><b>05</b>CHAPTER<br/>00:04</div>
+    <div class="ch-title">
+      <h2>我们站在哪</h2>
+      <p>家谱的最后一笔，是把自己画进去</p>
+    </div>
+  </div>
+  <div class="ch-body">
+    <p class="lede">家谱画完，必须回答的问题是：Easel 站在哪一格？答案在第四代的枝上——借个人 agent 当根系统（OpenClaw 的渠道矩阵、记忆、定时任务），长自己的垂直枝（社媒创作、发布、回执）。你的机器、你的凭证、你的台账——VOL.14 五起事故教会我们的每一条，都建立在第四代的归属之上。</p>
+    <p>而 VOL.14 的接入前三问（状态写在哪、怎么判活、重试上限在哪），在家谱面前可以补上第四问：<b>你要接的这家，在家谱第几代？</b>代际决定行为边界——第四代才替你管台账，第二代只管你的仓库，第三代在别人家的机器上替你操作。选底座、选渠道、选协作对象之前先对号入座，很多「期待落空」根本不会发生。</p>
+    <div class="demo" id="d4">
+      <div class="demo-head"><span class="demo-tag">DEMO 04 · 版本列车重放</span><span class="demo-title">OpenClaw release 审计链<span class="hint">逐站重放，每站一个对症修复</span></span></div>
+      <div class="demo-body">
+        <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>release-train</span></div><pre id="g4-log">2026.9.9 ──→ 2026.11.3，共 6 站。点「下一站」。</pre></div>
+        <div class="readout"><span>当前站：<b id="g4-v">2026.9.9</b></span><span>类别：<b id="g4-k">起点（Easel 内置版本）</b></span><span>对应痛点：<b id="g4-p">——</b></span></div>
+        <div><button class="ghost" id="g4-next">下一站</button> <button class="ghost" id="g4-reset">重置</button></div>
+      </div>
+      <div class="demo-foot">确定性重放：各站修复描述照抄官方 releases 页（2026.9.37 extended-stable / 10.9 安全补丁季 / 10.10 Gateway 流式防卡死 / 11.1 Provider 恢复节奏 / 11.2 Codex 连续性 / 11.3 限额错误不消耗重试预算）；「对应痛点」列为本文视角（呼应 VOL.14）。重置后可重放。</div>
+    </div>
+    <div class="rules">
+      <div class="rule"><b>LINEAGE 01 · 修家谱先画分水岭</b><p>凭证和运行环境归谁，比功能清单更能预测一个产品的行为——功能每季度刷新，归属十年不动。选型先对号入座，再谈跑分。</p></div>
+      <div class="rule"><b>LINEAGE 02 · 名字会蜕三次壳，契约一次不能死</b><p>Clawdbot→Moltbot→OpenClaw 三次改名三次活，靠的是自托管、开源、凭证归你三根契约。只有名字没有契约的产品，改名一次就散。</p></div>
+      <div class="rule"><b>LINEAGE 03 · 收拢与分化是同一枚硬币</b><p>大厂每收拢一格（Atlas 关停、Operator 并回主应用），本地系就多一台状态机要学、多一块空地要占——这不是口号，是 2026 年家谱上量出来的位移。</p></div>
+    </div>
+    <p>这篇没解决的：Hermes 学习闭环实测（未上手，不做纸面评判）；ClawHub 技能生态的逐项盘点；国内系（夸克、Tabbit）暂不入谱——凭证模型不透明，家谱宁缺一行，不猜一格。</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="wrap site-foot">
+  <div>
+    <div>造物手记 VOL.15 · 给 Agent 修家谱</div>
+    <div style="margin-top:5px">GENEALOGY CHART / 2026.11 / 单文件 · 零依赖 · 确定性小样</div>
+  </div>
+  <div class="foot-note">本篇为生态盘点，非代码解剖：日期与事件核对到 OpenClaw 官方 releases、Wikipedia（OpenClaw）、Forbes（2026-01-30）、Fortune、Firecrawl / innfactory / Composio 对比文与 Nous Research 官方页；大厂时间线（Cowork 2026-01-12、Copilot Cowork 2026-03-09、ChatGPT Work 2026-07、Atlas 关停 2026-08-09、Duet 2026-10-21）逐条有出处。四枚小样为确定性模型：时间线、判定表、互斥矩阵照抄文中表格。字体为 LXGW 文楷（OFL 许可，见 assets/fonts/OFL.txt）。插图由 GPT 系图像模型生成。</div>
+</footer>
+
+<script>
+'use strict';
+/* ---------- DEMO 01 · 三级跳时间线（七站确定性序列） ---------- */
+(function(){
+  var stops=[
+    {d:'2025-11',n:'Clawdbot 发布',note:'Peter Steinberger 发布开源个人 agent；「AI 该替你做事，不该只会聊天」',shell:'Clawdbot'},
+    {d:'2026-01',n:'病毒式爆红',note:'「真的会做事」出圈；商标压力随之而来',shell:'Clawdbot'},
+    {d:'2026-01-27',n:'改名 Moltbot',note:'仓促改名；作者后来自认「不太顺口」',shell:'Moltbot'},
+    {d:'2026-01-30',n:'改名 OpenClaw',note:'社区争议、域名被抢注；龙虾 🦞 定妆',shell:'OpenClaw'},
+    {d:'2026-03',n:'正式公开发布',note:'「The lobster way」；自托管 + 开源 + 凭证归你',shell:'OpenClaw'},
+    {d:'2026 中',n:'作者被 OpenAI 挖走',note:'项目社区接管，release 列车照常发车',shell:'OpenClaw'},
+    {d:'2026-11-11',n:'版本列车 2026.11.3',note:'另有 2026.9.37 extended-stable LTS 线（见 DEMO 04）',shell:'OpenClaw'}
+  ];
+  var i=0, log=document.getElementById('g1-log');
+  document.getElementById('g1-next').addEventListener('click',function(){
+    if(i>=stops.length) return;
+    var s=stops[i];
+    log.textContent += (i===0?'':+'\n') + (i===0?'':'\n') + '['+s.d+'] '+s.n+' — '+s.note;
+    document.getElementById('g1-date').textContent=s.d;
+    document.getElementById('g1-name').textContent=s.n;
+    document.getElementById('g1-note').textContent=s.note;
+    document.getElementById('g1-shell').textContent=s.shell;
+    i++;
+    if(i>=stops.length) this.disabled=true;
+  });
+  document.getElementById('g1-reset').addEventListener('click',function(){
+    i=0; log.textContent='2025-11 ──→ 2026-11-11，共 7 站。点「下一站」。';
+    var s=stops[0];
+    document.getElementById('g1-date').textContent=s.d;
+    document.getElementById('g1-name').textContent=s.n;
+    document.getElementById('g1-note').textContent=s.note;
+    document.getElementById('g1-shell').textContent=s.shell;
+    this.parentNode.querySelector('#g1-next').disabled=false;
+  });
+})();
+
+/* ---------- DEMO 02 · 代际分诊器（确定性判定表） ---------- */
+(function(){
+  var table={
+    '1':{run:'厂商云',cred:'厂商',duty:'厂商按订阅出勤',v:'第一代 · 聊天 bot'},
+    '2':{run:'你的终端/IDE',cred:'你（仓库级）',duty:'你发起，它执行',v:'第二代 · 编程 agent'},
+    '3':{run:'厂商虚拟机',cred:'厂商代持',duty:'厂商运维，你在门外看',v:'第三代 · 云端 computer-use'},
+    '4':{run:'你自己的设备',cred:'你',duty:'你（常驻，台账在你家）',v:'第四代 · 个人 agent'}
+  };
+  var cards=document.querySelectorAll('.g2-card');
+  cards.forEach(function(c){
+    c.addEventListener('click',function(){
+      cards.forEach(function(x){x.classList.remove('hot');});
+      c.classList.add('hot');
+      var g=c.dataset.g, t=table[g];
+      document.getElementById('g2-a1').textContent=t.run;
+      document.getElementById('g2-a2').textContent=t.cred;
+      document.getElementById('g2-a3').textContent=t.duty;
+      document.getElementById('g2-verdict').textContent=t.v;
+    });
+  });
+  document.getElementById('g2-reset').addEventListener('click',function(){
+    cards.forEach(function(x){x.classList.remove('hot');});
+    ['g2-a1','g2-a2','g2-a3','g2-verdict'].forEach(function(id){document.getElementById(id).textContent = id==='g2-verdict'?'点一张产品卡开始':'——';});
+  });
+})();
+
+/* ---------- DEMO 03 · 缝合冲突矩阵（固定互斥对） ---------- */
+(function(){
+  var sel=[];
+  var pairs={
+    'audit+learn':'相斥：自进化写出的技能不可预先审计，企业级可审计要求行为可预先框定——合并即两伤（第三章）。',
+    'audit+host':'相斥：自托管用你自己的 Key、凭证不出门，企业级沙箱计费要求收拢回主应用——商业模式对立（第四章①）。',
+    'audit+full':'相斥：全权代理的每一步若都要预先审计，就不是全权；可审计的全权只剩审批流版（第四章②）。',
+    'audit+multi':'相斥：多模型自由路由的退避与预算分散在各家节奏里，单一可审计口径难成立（VOL.14 第五章的重试分诊）。',
+    'audit+browser':'相斥：浏览器专项深度来自只做浏览器；平台广度稀释专项优化（第四章③）。',
+    'host+multi':'相斥：多模型自由路由用你自己的 Key，断了收拢计费的路——这正是自托管的一部分，二者一致但都与「大厂缝合版」无缘。'
+  };
+  function key(){ return sel.slice().sort().join('+'); }
+  function refresh(){
+    document.querySelectorAll('.g3-chip').forEach(function(c){
+      c.classList.toggle('hot', sel.indexOf(c.dataset.k)>=0);
+    });
+    document.getElementById('g3-n').textContent=sel.length+'/2';
+    var v=document.getElementById('g3-verdict'), log=document.getElementById('g3-log');
+    if(sel.length<2){ v.textContent='——'; v.className=''; log.textContent='选中两项，看它们之间是握手还是相斥。'; return; }
+    var k=key(), hit=pairs[k];
+    if(hit){ v.textContent='相斥'; v.className='bad'; log.textContent='['+sel.join(' + ')+']\n'+hit; }
+    else{ v.textContent='可共存（但注意第④条集成债）'; v.className=''; log.textContent='['+sel.join(' + ')+']\n不互斥。它们可以住进同一个产品——代价见 VOL.14：每接一层能力，背一层状态机。'; }
+  }
+  document.querySelectorAll('.g3-chip').forEach(function(c){
+    c.addEventListener('click',function(){
+      var k=c.dataset.k, idx=sel.indexOf(k);
+      if(idx>=0){ sel.splice(idx,1); } else { if(sel.length>=2) sel.shift(); sel.push(k); }
+      refresh();
+    });
+  });
+  document.getElementById('g3-reset').addEventListener('click',function(){ sel=[]; refresh(); });
+})();
+
+/* ---------- DEMO 04 · 版本列车重放（release 审计链，六站） ---------- */
+(function(){
+  var stops=[
+    {v:'2026.9.9',k:'起点',p:'Easel 内置版本（VOL.14 五起事故发生在这条线上）',log:'[start] Easel .tools 内置 2026.9.9 —— 本文五起事故的运行基线'},
+    {v:'2026.9.37',k:'extended-stable（LTS 线）',p:'Windows 状态路径别名误判「离线维护」→ 已修',log:'[9.37] Windows 等价路径保留同一状态归属；九月线安全与可靠性汇总'},
+    {v:'2026.10.9',k:'安全补丁季',p:'fast-uri/MSAL 凭证边界 —— 渠道白名单问题的上游侧',log:'[10.9] 运行时依赖安全补丁 + 凭证脱敏 + 恢复路径加固'},
+    {v:'2026.10.10',k:'Gateway 流式防卡死',p:'含工具调用样式的回复不再卡死网关',log:'[10.10] 回复含工具调用样 XML / 长 HTML 截断不再 stall Gateway'},
+    {v:'2026.11.1',k:'Provider 恢复节奏',p:'限流退避跟随对方节奏，不再本地堆积数小时',log:'[11.1] rate-limit cooldowns follow provider timing'},
+    {v:'2026.11.3',k:'限额错误不消耗重试预算',p:'识别限额类错误，不再无脑重试——对应 VOL.14 的 31 发循环',log:'[11.3] Recognize exhausted usage-limit errors without spending the transient rate-limit retry budget'}
+  ];
+  var i=0, log=document.getElementById('g4-log');
+  document.getElementById('g4-next').addEventListener('click',function(){
+    if(i>=stops.length) return;
+    var s=stops[i];
+    log.textContent += (i===0?'':'\n') + '['+s.v+'] '+s.k+' — '+s.p;
+    document.getElementById('g4-v').textContent=s.v;
+    document.getElementById('g4-k').textContent=s.k;
+    document.getElementById('g4-p').textContent=s.p;
+    i++;
+    if(i>=stops.length) this.disabled=true;
+  });
+  document.getElementById('g4-reset').addEventListener('click',function(){
+    i=0; log.textContent='2026.9.9 ──→ 2026.11.3，共 6 站。点「下一站」。';
+    document.getElementById('g4-v').textContent='2026.9.9';
+    document.getElementById('g4-k').textContent='起点（Easel 内置版本）';
+    document.getElementById('g4-p').textContent='——';
+    this.parentNode.querySelector('#g4-next').disabled=false;
+  });
+})();
+</script>
+</body>
+</html>

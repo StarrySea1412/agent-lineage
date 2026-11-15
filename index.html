@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Ccircle cx=%2212%22 cy=%2211%22 r=%223%22 fill=%22%233e6e8e%22/%3E%3Ccircle cx=%227%22 cy=%2218%22 r=%222.2%22 fill=%22%23b5482a%22/%3E%3Ccircle cx=%2217%22 cy=%2218%22 r=%222.2%22 fill=%22%233e6e8e%22/%3E%3Cpath d=%22M12 14l-4.4 5.2M12 14l4.4 5.2%22 stroke=%22%23333e48%22/%3E%3C/svg%3E"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="造物手记 VOL.15 · 给 Agent 修家谱——从 Clawdbot 到 OpenClaw 的三级跳，到 Cowork 们的收拢与 Atlas 的关停：四代家谱、一条分水岭、四条为什么不缝合的结构性原因。"/>
+<title>给 Agent 修家谱 · 造物手记 VOL.15</title>
+<style>
+/* 《住进机房的 Agent》· 造物手记 VOL.12
+   机架走线图：机房纸、石墨蓝黑、安全橙、LED 绿 —— 一面挂满巡检面板的机架立面。 */
+@font-face{font-family:"LXGW WenKai";src:url("assets/fonts/wenkai-regular.woff2") format("woff2");font-weight:300 599;font-style:normal;font-display:swap}
+@font-face{font-family:"LXGW WenKai";src:url("assets/fonts/wenkai-medium.woff2") format("woff2");font-weight:600 900;font-style:normal;font-display:swap}
+:root{
+  --paper:#f1f0ea;--paper-deep:#e7e5da;--card:#faf9f3;--card2:#f1efe4;
+  --ink:#2a3138;--ink-soft:#4d565e;--muted:#7b8288;--faint:#a6a89f;
+  --line:#d8d6cb;--line-soft:#e4e2d5;--line-strong:#b7b5a6;
+  --rail:#333e48;--rail-deep:#25303a;--rail-soft:rgba(51,62,72,.1);--rail-line:rgba(51,62,72,.4);
+  --signal:#3e6e8e;--signal-soft:rgba(62,110,142,.1);
+  --clock:#3f8f5f;--clock-soft:rgba(63,143,95,.12);
+  --steel:#5d6d74;--amber:#a8842c;--amber-soft:rgba(168,132,44,.12);--steel-soft:rgba(93,109,116,.11);
+  --plum:#b5482a;--plum-soft:rgba(181,72,42,.1);
+  --code-bg:#232a2e;--code-ink:#cfd6d3;
+  --serif:"LXGW WenKai","Songti SC","STSong","Noto Serif CJK SC",serif;
+  --sans:"LXGW WenKai",-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  --hard:4px 4px 0 rgba(84,92,88,.16);
+  --hard-sm:2px 2px 0 rgba(84,92,88,.15);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:26px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.95;-webkit-font-smoothing:antialiased;text-spacing:ideograph-alpha;
+  background-image:
+    radial-gradient(circle,rgba(70,80,78,.1) 1.1px,transparent 1.3px),
+    radial-gradient(circle,rgba(70,80,78,.055) 1.1px,transparent 1.3px),
+    linear-gradient(rgba(51,62,72,.05) 1px,transparent 1px);
+  background-size:26px 26px,104px 104px,100% 92px;
+  background-position:-1px -1px}
+::selection{background:#f0e2c8;color:#2a2410}
+a{color:var(--rail-deep);text-underline-offset:4px;text-decoration-thickness:1px}
+a:hover{color:var(--signal)}
+button,a,input,select{touch-action:manipulation}
+button{cursor:pointer;color:inherit;font:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--signal);outline-offset:3px}
+img{display:block;max-width:100%;height:auto}
+p{margin:0 0 1.22em}
+h1,h2,h3,h4{line-height:1.45;text-wrap:balance;margin:0}
+h1,h2,h3{font-family:var(--serif)}
+strong{font-weight:650;color:#1d2429}
+code{font-family:var(--mono);font-size:.85em;background:var(--rail-soft);color:#2b4a50;padding:.1em .36em;border-radius:2px;overflow-wrap:anywhere;border-bottom:1px solid rgba(53,86,92,.2)}
+em{font-style:normal;color:var(--signal);background:linear-gradient(transparent 62%,rgba(217,111,31,.15) 62%)}
+.progress{position:fixed;inset:0 auto auto 0;height:3px;width:100%;background:linear-gradient(90deg,var(--rail),var(--clock),var(--signal));transform:scaleX(0);transform-origin:left;z-index:60;pointer-events:none}
+.wrap{max-width:1180px;margin:auto;padding-inline:36px}
+
+/* masthead + hero + stats */
+.masthead{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-block:20px 14px;border-bottom:1.5px solid var(--line-strong);font-size:12px;letter-spacing:.09em;color:var(--muted)}
+.brand{display:flex;align-items:center;gap:11px;font-weight:650;color:var(--ink)}
+.brand-mark{width:25px;height:25px;display:grid;place-items:center;border:1.5px solid var(--line-strong);border-radius:2px;background:var(--card);box-shadow:var(--hard-sm)}
+.brand-mark svg{width:16px;height:16px;display:block}
+.brand small{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--signal);font-weight:700}
+.edition{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;display:flex;gap:14px;align-items:center}
+.edition .pack{display:inline-flex;align-items:center;gap:7px;color:var(--rail-deep)}
+.pack-dot{width:8px;height:8px;border:1.5px solid var(--signal);background:var(--signal-soft);transform:rotate(45deg)}
+.hero{padding-block:52px 38px;display:grid;grid-template-columns:1.06fr .94fr;gap:50px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;color:var(--muted);margin:0 0 22px;background:var(--card);border:1px dashed var(--rail-line);padding:6px 13px 6px 8px;border-radius:2px}
+.eyebrow span{color:var(--rail-deep);letter-spacing:.15em;font-weight:700;padding-right:11px;border-right:1px dashed var(--rail-line)}
+.hero h1{font-size:clamp(44px,5vw,70px);font-weight:800;line-height:1.14;letter-spacing:-.035em;margin:0 0 20px}
+.hero h1 em{color:var(--rail-deep);background:none}
+.hero h1 .sub{display:block;font-size:.4em;font-weight:400;letter-spacing:.02em;color:var(--ink-soft);margin-top:14px;line-height:1.72}
+.dek-wrap{margin:0 0 24px;max-width:566px;border-left:3px solid var(--signal);padding-left:18px}
+.dek-tag{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--signal);letter-spacing:.09em;margin:0 0 8px}
+.dek{font-size:16.5px;line-height:1.9;color:var(--ink-soft);margin:0}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px}
+.pill{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--muted);border:1px solid var(--line);border-radius:2px;padding:6px 11px;background:var(--card);box-shadow:var(--hard-sm)}
+.pill b{color:var(--ink);font-weight:700}
+.art{margin:0;position:relative}
+.screen{border:1.5px solid var(--ink);background:var(--card);padding:9px;box-shadow:6px 6px 0 rgba(84,92,88,.2);border-radius:2px}
+.screen-img{position:relative;overflow:hidden;background:#e6e3d6;border:1px solid var(--line)}
+.screen-img img{width:100%;aspect-ratio:4/3;object-fit:cover;filter:saturate(.96)}
+.screen-img::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(51,62,72,.05),rgba(168,132,44,.05));mix-blend-mode:multiply}
+.tc-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--muted);padding:8px 3px 1px}
+.tc-bar .tc{color:var(--rail-deep)}
+.art figcaption{font-size:11.5px;color:var(--faint);margin-top:9px;line-height:1.7;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--mono);letter-spacing:.02em}
+.art figcaption b{color:var(--signal);font-weight:700}
+.stats{border-block:1.5px solid var(--line-strong);background:rgba(250,249,242,.75)}
+.stats-inner{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+.stat{background:var(--card);padding:15px 20px}
+.stat b{display:block;font-family:var(--mono);font-size:23px;letter-spacing:-.02em;color:var(--rail-deep);line-height:1.25}
+.stat b span{font-size:11px;color:var(--faint);letter-spacing:.04em;margin-left:3px}
+.stat small{display:block;font-size:11px;color:var(--muted);letter-spacing:.03em;margin-top:3px}
+
+/* opening + toc + chapters */
+.opening{padding-block:46px 18px}
+.jd-card{margin:0 0 28px;border:1px solid var(--line-strong);border-left:4px solid var(--signal);background:var(--card);padding:15px 19px 12px;border-radius:2px;box-shadow:var(--hard)}
+.jd-tag{font-family:var(--mono);font-size:10px;letter-spacing:.09em;color:var(--faint);margin:0 0 8px}
+.jd-text{font-size:16px;line-height:1.95;color:var(--ink);margin:0 0 8px}
+.jd-note{font-size:12px;color:var(--muted);margin:0;line-height:1.8}
+.jd-list{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:7px}
+.jd-list li{font-size:13.5px;line-height:1.8;color:var(--ink-soft);display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:baseline}
+.jd-list li i{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--signal);font-weight:700}
+.lead{font-size:19.5px;line-height:1.96;color:var(--ink)}
+.lead::first-letter{float:left;font-size:62px;line-height:.86;padding:8px 12px 0 0;color:var(--signal);font-weight:800}
+.scope{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;margin-top:26px;font-family:var(--mono);line-height:1.85}
+.toc-head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line-strong);padding-bottom:8px;margin:30px 0 0;font-family:var(--mono);font-size:11px;letter-spacing:.11em;color:var(--faint)}
+.toc{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-top:0;margin:0 0 54px}
+.toc a{background:var(--card);padding:13px 17px;text-decoration:none;color:var(--ink);display:grid;grid-template-columns:56px 1fr;gap:11px;align-items:baseline;transition:background .16s}
+.toc a:hover{background:var(--card2);color:var(--ink)}
+.toc a i{font-family:var(--mono);font-style:normal;font-size:10.5px;color:var(--signal);letter-spacing:.03em}
+.toc a span{font-size:14px}
+.toc a small{display:block;font-size:11px;color:var(--faint);margin-top:2px;line-height:1.6}
+.chapter{padding-block:48px 16px;border-top:1px solid var(--line)}
+.ch-head{display:grid;grid-template-columns:88px 1fr;gap:22px;align-items:start;margin:0 auto 30px;max-width:980px}
+.ch-num{font-family:var(--mono);font-size:13px;color:var(--rail-deep);letter-spacing:.06em;padding-top:12px;border-top:2px solid var(--rail);line-height:1.5}
+.ch-num b{display:block;font-size:33px;color:var(--ink);letter-spacing:-.02em;font-weight:700;line-height:1.1}
+.ch-title h2{font-size:clamp(29px,3.3vw,42px);font-weight:750;letter-spacing:-.024em;line-height:1.25}
+.ch-title p{color:var(--muted);font-size:14px;margin:8px 0 0;line-height:1.8;max-width:640px}
+.ch-body{max-width:768px;margin-inline:auto}
+.ch-body h3{font-size:22px;font-weight:700;margin:40px 0 13px;letter-spacing:-.01em;padding-left:12px;border-left:3px solid var(--signal)}
+.ch-body h4{font-size:16px;font-weight:650;margin:24px 0 8px;color:var(--rail-deep)}
+.ch-body ul,.ch-body ol{padding-left:1.35em;margin:0 0 1.25em}
+.ch-body li{margin:.38em 0}
+.ch-body li::marker{color:var(--signal)}
+.lede{font-size:17px;color:var(--ink-soft);line-height:1.95}
+.pull{border-left:3px solid var(--signal);background:linear-gradient(90deg,var(--signal-soft),transparent 72%);padding:16px 21px;margin:26px 0;font-family:var(--serif);font-size:19px;line-height:1.85;color:var(--ink)}
+.pull b{color:var(--signal);font-weight:700}
+.note{font-size:13px;color:var(--muted);border-left:2px solid var(--line-strong);padding-left:14px;margin:20px 0;line-height:1.85}
+.note b{color:var(--ink-soft)}
+.fig{margin:30px auto;max-width:980px;position:relative;left:50%;transform:translateX(-50%);width:min(940px,calc(100vw - 72px))}
+.fig .frame{border:1.5px solid var(--line-strong);background:var(--card);padding:14px;box-shadow:var(--hard);border-radius:2px}
+.fig figcaption{font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.02em;margin-top:8px;line-height:1.75;display:flex;gap:10px;align-items:baseline}
+.fig figcaption b{color:var(--signal);font-weight:700}
+.layers-cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;color:var(--faint);margin:0 0 13px}
+.layers{display:grid;gap:0}
+.layer{display:grid;grid-template-columns:10px 44px 128px 1fr;gap:10px;align-items:stretch;border:1px solid var(--line);border-top:0;background:var(--card);padding:11px 14px}
+.layer:first-of-type{border-top:1px solid var(--line)}
+.layer i{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--faint);padding-top:2px}
+.layer b{font-size:14px;line-height:1.5}
+.layer b small{display:block;font-family:var(--mono);font-size:9.5px;color:var(--faint);font-weight:400;letter-spacing:.05em;margin-top:2px}
+.layer p{margin:0;font-size:12.8px;line-height:1.72;color:var(--ink-soft)}
+.layer p code{font-size:11px}
+.layer-mark{width:8px;border-radius:1px;margin-block:-11px;margin-left:-14px}
+.lm-1{background:var(--rail)}.lm-2{background:var(--steel)}.lm-3{background:var(--clock)}.lm-4{background:var(--signal)}.lm-5{background:var(--plum)}.lm-6{background:#6f6a50}
+
+/* code + table + demo chrome */
+.code{margin:22px 0;border:1.5px solid #2a3134;background:var(--code-bg);border-radius:3px;overflow:hidden;box-shadow:var(--hard)}
+.code-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 12px;border-bottom:1px solid #394247;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:#95a3a0;background:#2b3438}
+.code-bar b{color:#d8c07a;font-weight:600}
+.code pre{margin:0;padding:14px 15px 16px;overflow-x:auto;font-family:var(--mono);font-size:12.3px;line-height:1.76;color:var(--code-ink);tab-size:2}
+.code pre .c{color:#6f7d78;font-style:italic}
+.code pre .k{color:#8fc4d0}
+.code pre .s{color:#c9bd84}
+.code pre .n{color:#e0a25c}
+.code pre .f{color:#9fd0b8}
+.tablewrap{overflow-x:auto;margin:22px 0;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);box-shadow:var(--hard-sm)}
+table{border-collapse:collapse;width:100%;font-size:13.4px;min-width:560px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line-soft);vertical-align:top;line-height:1.7}
+th{background:var(--card2);font-family:var(--mono);font-size:10px;letter-spacing:.07em;color:var(--muted);font-weight:700}
+tr:last-child td{border-bottom:0}
+td b{color:#1d2429;font-weight:650}
+td code{font-size:11.3px}
+td.ok{color:var(--rail-deep)}td.warn{color:var(--clock)}
+.num{font-family:var(--mono);font-size:12.4px;color:var(--rail-deep);white-space:nowrap}
+.demo{max-width:1000px;margin:40px auto;border:1.5px solid var(--line-strong);background:var(--card);border-radius:3px;overflow:hidden;box-shadow:var(--hard)}
+.demo-head{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--card2);flex-wrap:wrap}
+.demo-tag{font-family:var(--mono);font-size:10px;letter-spacing:.09em;color:var(--signal);font-weight:700}
+.demo-title{font-size:15px;font-weight:650;margin-left:auto;display:flex;align-items:center;gap:9px}
+.demo-title .hint{font-family:var(--mono);font-size:10px;color:var(--faint);font-weight:400;letter-spacing:.02em}
+.demo-body{padding:16px 17px 15px}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;padding-bottom:13px;border-bottom:1px solid var(--line-soft);margin-bottom:13px}
+.ctl{min-width:140px;flex:1}
+.ctl-btn{flex:0 0 auto;display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.ctl label{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--muted);margin-bottom:5px}
+.ctl label b{color:var(--rail-deep);font-weight:700;font-size:12px}
+button.run{background:var(--rail);color:#f6f8f5;font-weight:700;border:0;border-radius:2px;padding:8px 15px;font-size:13px;letter-spacing:.02em;box-shadow:var(--hard-sm)}
+button.run:hover{background:var(--rail-deep)}
+button.ghost{background:transparent;border:1px solid var(--line-strong);color:var(--muted);border-radius:2px;padding:8px 13px;font-size:12.5px}
+button.ghost:hover:not(:disabled){border-color:var(--signal);color:var(--signal)}
+button.ghost:disabled{opacity:.42;cursor:not-allowed}
+input[type=range]{appearance:none;width:100%;height:22px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:3px;background:var(--line-strong);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:var(--rail);border:2px solid var(--card);margin-top:-6px;box-shadow:0 0 0 1px var(--rail)}
+input[type=text],select{background:var(--card);border:1px solid var(--line-strong);border-radius:2px;padding:7px 9px;font-family:var(--sans);font-size:13.4px;color:var(--ink);width:100%}
+input[type=text]:focus,select:focus{outline:2px solid var(--signal);outline-offset:1px}
+.switch{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.01em;cursor:pointer;user-select:none}
+.switch input{appearance:none;width:32px;height:17px;border-radius:9px;background:var(--line-strong);position:relative;cursor:pointer;transition:background .16s}
+.switch input::after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:transform .16s}
+.switch input:checked{background:var(--rail)}
+.switch input:checked::after{transform:translateX(15px)}
+.hintline{font-family:var(--mono);font-size:10.5px;color:var(--faint);line-height:1.7}
+.demo-foot{border-top:1px solid var(--line-soft);padding:9px 16px;font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.01em;line-height:1.75}
+.demo-foot b{color:var(--rail-deep);font-weight:600}
+
+/* epilogue */
+.epilogue{max-width:768px;margin:0 auto;padding-block:36px 16px}
+.epilogue h2{font-size:clamp(27px,3vw,37px);margin-bottom:15px}
+.rules{display:grid;gap:9px;margin:22px 0 26px}
+.rule{border:1px solid var(--line-strong);border-left:3px solid var(--rail);background:var(--card);border-radius:0 2px 2px 0;padding:13px 16px;box-shadow:var(--hard-sm)}
+.rule b{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;color:var(--rail-deep);margin-bottom:4px}
+.rule p{margin:0;font-size:14.5px;color:var(--ink-soft);line-height:1.82}
+.limits{border-top:1px solid var(--line);padding-top:17px;font-size:13.5px;color:var(--muted)}
+.limits b{color:var(--ink-soft)}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 7px}
+.links a{font-family:var(--mono);font-size:11px;letter-spacing:.02em;border:1px solid var(--line-strong);padding:6px 11px;text-decoration:none;color:var(--rail-deep);background:var(--card);border-radius:2px}
+.links a:hover{border-color:var(--signal);color:var(--signal)}
+.site-foot{border-top:1.5px solid var(--line-strong);margin-top:48px;padding-block:20px 34px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;letter-spacing:.03em;color:var(--faint)}
+.site-foot a{color:var(--muted)}
+.foot-note{font-size:10.5px;color:#8b8b7c;line-height:1.8;max-width:600px}
+
+@media (max-width:980px){
+  .hero{grid-template-columns:1fr;gap:28px;padding-block:38px 28px}
+  .hero h1{font-size:clamp(38px,7.6vw,54px)}
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+  .ch-head{grid-template-columns:62px 1fr;gap:15px}
+  .ch-num b{font-size:25px}
+  .ad-wrap,.tk-wrap,.ef-wrap,.pw-wrap{grid-template-columns:1fr}
+  .toc{grid-template-columns:1fr}
+  .layer{grid-template-columns:10px 34px 1fr;grid-template-rows:auto auto;gap:6px 10px}
+  .layer i{grid-row:1}
+  .layer b{grid-column:3}
+  .layer p{grid-column:3;grid-row:2}
+  .layer-mark{margin-block:-11px}
+  .ef-readout{grid-template-columns:repeat(2,1fr)}
+  .pw-choose{grid-template-columns:1fr}
+}
+@media (max-width:620px){
+  .wrap{padding-inline:16px}
+  .masthead{font-size:10px;letter-spacing:.04em}
+  .edition .pack{display:none}
+  .hero h1{font-size:36px}
+  .lead{font-size:17.5px}
+  .ch-head{grid-template-columns:1fr;gap:5px}
+  .ch-num{border-top:0;padding-top:0;display:flex;align-items:baseline;gap:9px}
+  .ch-num b{font-size:21px}
+  .ch-title h2{font-size:26px}
+  .ch-body h3{font-size:19px}
+  .demo-body{padding:11px}
+  .demo-title .hint{display:none}
+  .code pre{font-size:11.2px}
+  .fig{width:calc(100vw - 32px)}
+  .ctl-btn{flex-wrap:wrap;max-width:100%}
+  .ctl-btn button{padding:7px 11px;font-size:12px;flex:0 1 auto}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+@media print{body{background:#fff}.progress,.demo,.art,.links,.toc,.site-foot{display:none}}
+
+/* ══ D1 拨测状态机 pm-* ══ */
+.pm-wrap{display:grid;grid-template-columns:1fr 262px;gap:14px}
+.pm-stage{border:1.5px solid var(--line-strong);border-radius:3px;background:var(--card);padding:14px;box-shadow:var(--hard-sm)}
+.pm-state{display:inline-flex;align-items:baseline;gap:9px;font-family:var(--mono);font-weight:800;font-size:20px;border:2px solid;border-radius:3px;padding:6px 14px;box-shadow:var(--hard-sm)}
+.pm-state .zh{font-size:11px;font-weight:400;letter-spacing:.08em}
+.pm-state.up{color:var(--clock);border-color:var(--clock);background:rgba(63,143,95,.1)}
+.pm-state.down{color:var(--alarm);border-color:var(--alarm);background:rgba(62,110,142,.1)}
+.pm-lights{display:flex;gap:5px;margin:13px 0 4px}
+.pm-light{width:20px;height:8px;border-radius:2px;background:var(--line);border:1px solid var(--line-strong)}
+.pm-light.f{background:var(--alarm);border-color:var(--alarm)}
+.pm-light.s{background:var(--clock);border-color:var(--clock)}
+.pm-counter-lbl{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.05em}
+.pm-log{font-family:var(--mono);font-size:9.8px;line-height:1.75;color:var(--muted);background:var(--card2);border:1px solid var(--line);border-radius:2px;padding:7px 9px;min-height:150px;max-height:220px;overflow-y:auto;white-space:pre-wrap;overflow-wrap:anywhere;margin-top:11px}
+.pm-log .bad{color:var(--alarm)}
+.pm-log .good{color:var(--clock)}
+.pm-log .cool{color:var(--rail);font-weight:700}
+.pm-side{border:1px solid var(--line);border-radius:2px;background:var(--card2);padding:11px 12px;display:flex;flex-direction:column;gap:8px}
+.pm-side h5{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.07em;color:var(--faint);font-weight:700}
+.pm-btnrow{display:flex;gap:6px;flex-wrap:wrap}
+.pm-btnrow button{padding:6px 10px;font-size:11.5px}
+.pm-kv{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.7}
+.pm-kv b{color:var(--ink);text-align:right}
+.pm-kv b.yes{color:var(--clock)}.pm-kv b.no{color:var(--alarm)}
+
+/* ══ D2 健康分秤 hs-* ══ */
+.hs-wrap{display:grid;grid-template-columns:250px 1fr;gap:14px}
+.hs-score{border:1.5px solid var(--line-strong);border-radius:3px;background:var(--card);padding:16px;text-align:center;box-shadow:var(--hard-sm)}
+.hs-big{font-family:var(--mono);font-size:56px;font-weight:800;letter-spacing:-.03em;line-height:1.05}
+.hs-big.ok{color:var(--clock)}.hs-big.warn{color:var(--amber)}.hs-big.crit{color:var(--alarm)}
+.hs-status{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--muted);margin-top:4px}
+.hs-add{display:flex;gap:5px;flex-wrap:wrap;margin-top:13px;justify-content:center}
+.hs-add button{padding:5px 9px;font-size:10.5px;font-family:var(--mono)}
+.hs-list{font-family:var(--mono);font-size:9.8px;line-height:1.8;color:var(--muted);margin-top:11px;max-height:150px;overflow-y:auto;text-align:left}
+.hs-list b{color:var(--alarm)}
+.hs-chart{border:1px solid var(--line-strong);border-radius:2px;background:var(--card);padding:10px 12px}
+.hs-svg{width:100%;height:170px;display:block}
+.hs-legend{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;color:var(--faint);margin-top:8px}
+.hs-legend span::before{content:"";display:inline-block;width:14px;height:3px;margin-right:5px;vertical-align:3px}
+.hs-legend .a::before{background:var(--alarm)}
+.hs-legend .b::before{background:var(--rail)}
+.hs-note{margin-top:9px;font-size:12px;line-height:1.75;color:var(--ink-soft);border-left:2px solid var(--rail);padding-left:10px}
+.hs-note b{color:var(--rail)}
+.hs-switch{margin-top:10px}
+
+/* ══ D3 根因卡生成器 rc-* ══ */
+.rc-wrap{display:grid;grid-template-columns:236px 1fr;gap:14px}
+.rc-types{display:flex;flex-direction:column;gap:5px}
+.rc-type{border:1px solid var(--line);background:var(--card);border-radius:2px;padding:8px 10px;text-align:left;cursor:pointer}
+.rc-type b{font-size:12.5px;display:flex;justify-content:space-between;align-items:center}
+.rc-type b em{font-style:normal;font-family:var(--mono);font-size:9px;font-weight:700;border:1px solid;border-radius:2px;padding:1px 5px}
+.rc-type small{display:block;font-size:10.5px;color:var(--muted);line-height:1.6;margin-top:2px}
+.rc-type[aria-pressed=true]{border-color:var(--rail);background:rgba(51,62,72,.06)}
+.rc-card{border:1.5px solid var(--line-strong);border-radius:3px;background:var(--card);padding:13px 15px;box-shadow:var(--hard-sm)}
+.rc-chain{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-family:var(--mono);font-size:10px;color:var(--ink-soft);margin-bottom:10px}
+.rc-chain i{font-style:normal;color:var(--alarm)}
+.rc-chain span{border:1px solid var(--line);background:var(--card2);border-radius:2px;padding:2px 7px}
+.rc-root{font-size:13.5px;line-height:1.8;color:var(--ink)}
+.rc-root b{color:var(--rail)}
+.rc-steps{margin-top:10px;border:1px solid var(--line);border-radius:2px;background:var(--code-bg);padding:9px 11px;font-family:var(--mono);font-size:10px;line-height:1.8;color:#cfd6d3;white-space:pre-wrap;overflow-wrap:anywhere;max-height:190px;overflow-y:auto}
+.rc-steps .cmd{color:#9fc4ae}
+.rc-steps .dim{color:#7d8a85}
+.rc-ai{margin-top:10px;border-left:3px solid #77588a;background:rgba(119,88,138,.07);padding:8px 11px;font-size:12.5px;line-height:1.75;color:var(--ink-soft)}
+.rc-ai b{color:#77588a}
+.rc-ai.err{border-color:var(--alarm);background:rgba(217,111,31,.08)}
+.rc-ai.err b{color:var(--alarm)}
+.rc-foot{margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-family:var(--mono);font-size:10px;color:var(--faint)}
+.rc-foot .conf{border:1px solid var(--clock);color:var(--clock);border-radius:2px;padding:1px 7px;font-weight:700}
+.rc-foot .conf.mid{border-color:var(--amber);color:var(--amber)}
+.rc-foot .prop{border:1px dashed var(--rail);color:var(--rail);border-radius:2px;padding:1px 7px}
+
+/* ══ D4 命令安检门 gw-* ══ */
+.gw-wrap{display:grid;grid-template-columns:1fr 288px;gap:14px}
+.gw-in{display:flex;flex-direction:column;gap:9px}
+.gw-input{display:flex;gap:7px}
+.gw-input input{flex:1;font-family:var(--mono);font-size:12.5px}
+.gw-cases{display:flex;gap:5px;flex-wrap:wrap}
+.gw-cases button{padding:4px 9px;font-size:10.5px;font-family:var(--mono)}
+.gw-verdict{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-weight:800;font-size:15px;border:2px solid;border-radius:3px;padding:7px 13px;width:fit-content;box-shadow:var(--hard-sm)}
+.gw-verdict.allow{color:var(--clock);border-color:var(--clock);background:rgba(63,143,95,.1)}
+.gw-verdict.deny{color:var(--alarm);border-color:var(--alarm);background:rgba(62,110,142,.1)}
+.gw-verdict small{font-size:10.5px;font-weight:400;letter-spacing:.06em}
+.gw-segs{margin-top:11px;display:flex;flex-direction:column;gap:6px}
+.gw-seg{display:grid;grid-template-columns:22px 1fr 92px;gap:9px;align-items:center;border:1px solid var(--line);border-radius:2px;background:var(--card);padding:7px 10px}
+.gw-seg .mk{font-family:var(--mono);font-weight:800;text-align:center;font-size:14px}
+.gw-seg.ok .mk{color:var(--clock)}
+.gw-seg.bad .mk{color:var(--alarm)}
+.gw-seg.bad{background:rgba(217,111,31,.07)}
+.gw-seg code{font-family:var(--mono);font-size:11.5px;color:var(--ink);overflow-wrap:anywhere}
+.gw-seg .risk{font-family:var(--mono);font-size:9.5px;text-align:right;white-space:nowrap}
+.gw-seg .risk em{font-style:normal;font-weight:700;border:1px solid;border-radius:2px;padding:1px 5px}
+.gw-seg .risk em.lo{color:var(--clock);border-color:var(--clock)}
+.gw-seg .risk em.mid{color:var(--amber);border-color:var(--amber)}
+.gw-seg .risk em.hi{color:var(--alarm);border-color:var(--alarm)}
+.gw-audit{font-family:var(--mono);font-size:9.8px;line-height:1.75;color:var(--muted);background:var(--card2);border:1px dashed var(--line-strong);border-radius:2px;padding:8px 10px;margin-top:11px;white-space:pre-wrap;overflow-wrap:anywhere}
+.gw-audit b{color:var(--alarm)}
+.gw-side{border:1px solid var(--line);border-radius:2px;background:var(--card2);padding:11px 12px}
+.gw-side h5{margin:0 0 8px;font-family:var(--mono);font-size:10px;letter-spacing:.07em;color:var(--faint);font-weight:700}
+.gw-rule{font-family:var(--mono);font-size:9.8px;line-height:1.7;border-bottom:1px dashed var(--line);padding-block:5px;color:var(--ink-soft)}
+.gw-rule b{color:var(--rail);display:block;font-size:10.5px}
+.gw-rule em{font-style:normal;color:var(--amber);font-weight:700}
+.gw-rule .hi{color:var(--alarm)}
+.gw-rule:last-child{border-bottom:0}
+@media (max-width:980px){
+  .pm-wrap,.hs-wrap,.rc-wrap,.gw-wrap{grid-template-columns:1fr}
+}
+@media (max-width:620px){
+  .gw-seg{grid-template-columns:22px 1fr}
+  .gw-seg .risk{grid-column:2;text-align:left;white-space:normal}
+  .rc-foot{flex-direction:column;align-items:flex-start}
+}
+
+
+/* ---- VOL.15 小样专属 ---- */
+.term{background:var(--code-bg);border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.term-bar{display:flex;align-items:center;gap:6px;padding:7px 12px;background:rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.08)}
+.term-bar i{width:9px;height:9px;border-radius:50%;background:var(--line-strong);display:inline-block}
+.term-bar i:first-child{background:#c75b5b}.term-bar i:nth-child(2){background:#c9a55b}.term-bar i:nth-child(3){background:#6fa876}
+.term-bar span{margin-left:8px;font-family:var(--mono);font-size:11px;color:#9fb0a8;letter-spacing:.08em}
+.term pre{margin:0;padding:12px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:var(--code-ink);white-space:pre-wrap;min-height:96px}
+.readout{display:flex;flex-wrap:wrap;gap:8px 18px;margin:12px 0;font-size:12.5px;color:var(--muted)}
+.readout b{color:var(--ink);font-weight:600}
+.readout b.bad{color:var(--signal)}
+.g1-stop{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:12px}
+.g1-date{font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.06em}
+.g1-name{font-size:22px;font-weight:700;color:var(--ink);margin:4px 0}
+.g1-note{font-size:13px;color:var(--ink-soft);line-height:1.7}
+.g2-cards{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.g2-card{border:1px solid var(--line-strong);border-radius:8px;background:var(--card);padding:8px 14px;font-family:var(--sans);font-size:13px;color:var(--ink);cursor:pointer;transition:.2s}
+.g2-card:hover{border-color:var(--signal)}
+.g2-card.hot{background:var(--signal-soft);border-color:var(--signal);color:var(--signal);font-weight:600}
+.g2-q{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 14px}
+.g2-qrow{display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:12.5px;color:var(--muted);border-bottom:1px dashed var(--line-soft)}
+.g2-qrow:last-child{border-bottom:0}
+.g2-qrow b{color:var(--ink);text-align:right}
+.g3-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.g3-chip{border:1px solid var(--line-strong);border-radius:999px;background:var(--card);padding:8px 16px;font-family:var(--sans);font-size:13px;color:var(--ink);cursor:pointer;transition:.2s}
+.g3-chip:hover{border-color:var(--signal)}
+.g3-chip.hot{background:var(--signal);border-color:var(--signal);color:#faf9f3;font-weight:600}
+.g4-warn{font-size:12px;color:var(--muted);margin-top:8px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tbl-wrap table{min-width:560px}
+
+</style>
+</head>
+<body>
+
+<header class="wrap masthead">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="2.6" stroke="#333e48" stroke-width="1.4"/><circle cx="6.5" cy="17" r="2.6" stroke="#333e48" stroke-width="1.4"/><circle cx="17.5" cy="17" r="2.6" stroke="#333e48" stroke-width="1.4"/><path d="M10.8 8.2 7.6 14.8M13.2 8.2l3.2 6.6" stroke="#333e48" stroke-width="1.1"/></svg></span>
+    <span>造物手记 <small>VOL.15</small></span>
+  </div>
+  <div class="edition">
+    <span class="pack"><i class="pack-dot" aria-hidden="true"></i>GENEALOGY CHART / 谱系图</span>
+    <span>BOARD 15 · 2026.11</span>
+  </div>
+</header>
+
+<section class="wrap hero">
+  <div>
+    <p class="eyebrow"><span>FIELD NOTES</span>一次族谱式的盘点</p>
+    <h1>给 Agent<br/><em>修家谱</em><span class="sub">从 Clawdbot 到 OpenClaw 的三级跳，到 Cowork 们的收拢与 Atlas 的关停——一张四代家谱、一条分水岭、两代同物种的分化、四条"为什么不缝合"的结构性原因；四枚互动小样全部确定性，时间线与判定表可重放</span></h1>
+    <div class="dek-wrap">
+      <p class="dek-tag">本篇提要</p>
+      <p class="dek">2026 年被叫作「AI 助手变 Agent 之年」：一月 Anthropic 放出 Cowork，三月 Microsoft 借力跟进，七月 OpenAI 补位，八月它自己的浏览器项目关停——大厂在收拢，开源在分化，一只改名三次的龙虾依然活着。为什么没有人把所有优点缝成一个产品？本篇画一张家谱：四代 agent 的分水岭画在哪里、同物种为何分岔出两种进化、大厂的结构性天花板长什么样，以及我们的 Easel 在这张图上站在哪。</p>
+    </div>
+    <div class="hero-meta">
+      <span class="pill"><b>5</b> 章 · 4 枚互动</span>
+      <span class="pill"><b>3</b> 次改名 · 零次架构死亡</span>
+      <span class="pill"><b>4</b> 代家谱 · 1 条分水岭</span>
+      <span class="pill"><b>5</b> 条大厂时间线 · 逐条有日期</span>
+    </div>
+  </div>
+  <figure class="art">
+    <div class="screen">
+      <div class="screen-img">
+        <img src="assets/art/hero.webp" alt="单眼折纸鸟族谱绘制员站在家谱墙前，墙上相框里是龙虾、纸鹤、云朵、终端四种小机器肖像，鸟持教杆指向龙虾相框" width="1152" height="832"/>
+      </div>
+      <div class="tc-bar"><span>BOARD 15</span><span class="tc">ORIGIN · FOUR GENERATIONS · TWO EVOLUTIONS · BIG TECH</span></div>
+    </div>
+    <figcaption><span><b>FIG. 00</b> 一面家谱墙：每个相框里住着一种「替你做事」的形态</span><span>INK &amp; GOUACHE / 2026</span></figcaption>
+  </figure>
+  <div>
+    <p class="dek" style="margin-top:26px">画这张家谱的动机不是怀旧。2026 年 11 月的今天，"AI 会做事"已经从口号变成货架：上游 OpenClaw 的版本列车开到了 2026.11.3，我们的 Easel 就停靠在它的分支线上（VOL.14 的五起事故还挂在台账上）。要在这样的年份里决定「接谁的底座、跟哪条线走」，先得有一张谱——不然每次选型都像第一次见到这个东西。</p>
+    <p class="scope">标本 · 本篇为生态盘点，非代码解剖；全部日期与事件核对到官方 releases、Wikipedia、Forbes/Fortune 报道与对比文（Firecrawl / innfactory / Composio），口径详见各章标注。<br/>四枚小样全部确定性：时间线、判定表、互斥矩阵均照抄文中表格，参数摊在明面上，可重置重放。</p>
+    <div class="toc-head"><span>CONTENTS · 五段谱系</span><span>ORIGIN → FOUR GENERATIONS → TWO EVOLUTIONS → BIG TECH → OUR BRANCH</span></div>
+    <nav class="toc">
+      <a href="#ch1"><i>01</i><span>一只龙虾的三级跳<small>Clawdbot→Moltbot→OpenClaw：名字死了三次，架构一次没死</small></span></a>
+      <a href="#ch2"><i>02</i><span>四代家谱，一条分水岭<small>凭证和运行环境归谁，比功能清单更能预测一个产品的行为</small></span></a>
+      <a href="#ch3"><i>03</i><span>同物种的两种进化<small>OpenClaw 与 Hermes：常驻助理与自进化便携，方向相反合并即两伤</small></span></a>
+      <a href="#ch4"><i>04</i><span>大厂为什么不缝合<small>Cowork 领跑、Atlas 关停：四条结构性原因，条条有日期</small></span></a>
+      <a href="#ch5"><i>05</i><span>我们站在哪<small>Easel 在家谱上的位置，与接入前三问的续篇</small></span></a>
+    </nav>
+  </div>
+</section>
+
+<section class="wrap stats" aria-label="关键数字">
+  <div class="wrap stats-inner">
+    <div class="stat"><b>3<span>次改名</span></b><small>Clawdbot→Moltbot→OpenClaw（2025.11–2026.01），壳换了三次，动物没死</small></div>
+    <div class="stat"><b>4<span>代</span></b><small>聊天 bot / 编程 agent / 云端 computer-use / 个人 agent，分水岭=凭证归属</small></div>
+    <div class="stat"><b>&lt;10<span>个月</span></b><small>ChatGPT Atlas 从上线（2025-10-21）到关停（2026-08-09）的全部寿命</small></div>
+    <div class="stat"><b>10–20<span>%</span></b><small>对比文口径：OpenClaw 同任务相对 Hermes 的 token 消耗差</small></div>
+  </div>
+</section>
+
+<main>
+
+<section class="chapter" id="ch1">
+  <div class="ch-head">
+    <div class="ch-num"><b>01</b>CHAPTER<br/>00:00</div>
+    <div class="ch-title">
+      <h2>一只龙虾的三级跳</h2>
+      <p>Clawdbot→Moltbot→OpenClaw：三次改名三次蜕壳——壳换了，动物没死</p>
+    </div>
+  </div>
+  <div class="ch-body">
+    <p class="lede">2025 年 11 月，Peter Steinberger——PSPDFKit 创始人、iOS 圈的老兵——发布了一个开源项目，名字叫 Clawdbot。理念一句话：AI 不该只会聊天，该替你管日历、订机票、跑任务。2026 年 1 月，它病毒式爆红；然后两个月里，它换了三次名字。</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>时间</th><th>事件</th><th>出处</th></tr>
+      <tr><td>2025-11</td><td><b>Clawdbot</b> 发布</td><td>Wikipedia · OpenClaw</td></tr>
+      <tr><td>2026-01</td><td>病毒式爆红，「真的会做事」出圈</td><td>同上</td></tr>
+      <tr><td>2026-01-27</td><td>商标压力下仓促改名 <b>Moltbot</b>——作者后来自认「不太顺口」</td><td>Forbes · dev.to 回顾</td></tr>
+      <tr><td>2026-01-30</td><td>再度改名 <b>OpenClaw</b>，社区争议、域名被抢注</td><td>Forbes（01-30）</td></tr>
+      <tr><td>2026-03</td><td>正式公开发布，龙虾 🦞 定妆：「The lobster way」</td><td>对比文口径</td></tr>
+      <tr><td>2026 中</td><td>作者被 OpenAI 挖走；项目由社区接管，release 列车照常发车</td><td>Wikipedia · releases</td></tr>
+      <tr><td>2026-11-11</td><td>版本列车开到 <b>2026.11.3</b>（另有 2026.9.37 extended-stable LTS 线）</td><td>npm · releases 页</td></tr>
+    </table></div>
+    <div class="fig"><div class="frame"><img src="assets/art/ch1.webp" alt="三件龙虾外壳标本从旧到新挂在木衣架上，折纸鸟扶梯子挂最新一只，地上散落脱落的旧壳碎片" width="1152" height="832" loading="lazy" style="width:100%;border:1px solid var(--line)"/></div><figcaption><span><b>FIG. 01</b> molt，本义蜕壳：壳换了三次，动物一直是那只</span><span>INK &amp; GOUACHE / 2026</span></figcaption></div>
+    <p>OpenClaw 这个名字不是随手起的——molt 是龙虾蜕壳的本义，改名史活成了一则生物学寓言：<b>壳是会被迫更换的，肉不会。</b>值得盯着的还有 release 列车的成色：每一版都挂着完整的审计件——npm preflight、release CI 报告、完整性 sha512、逐 PR 的贡献记录（本文第 04 章引用的几条修复原文即出自这套台账）。一个被挖走创始人的社区项目，把工程纪律守到了比多数商业产品更严的程度。</p>
+    <div class="demo" id="d1">
+      <div class="demo-head"><span class="demo-tag">DEMO 01 · 三级跳时间线</span><span class="demo-title">七站重放<span class="hint">按「下一站」逐站推进</span></span></div>
+      <div class="demo-body">
+        <div class="g1-stop"><div class="g1-date" id="g1-date">2025-11</div><div class="g1-name" id="g1-name">Clawdbot 发布</div><div class="g1-note" id="g1-note">Peter Steinberger 发布开源个人 agent；「AI 该替你做事，不该只会聊天」</div></div>
+        <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>timeline</span></div><pre id="g1-log">2025-11 ── 2026-11-11，共 7 站。点「下一站」。</pre></div>
+        <div class="readout"><span>当前壳名：<b id="g1-shell">Clawdbot</b></span><span>架构状态：<b>未变</b></span></div>
+        <div><button class="ghost" id="g1-next">下一站</button> <button class="ghost" id="g1-reset">重置</button></div>
+      </div>
+      <div class="demo-foot">确定性推演：七站日期与事件照抄 Wikipedia / Forbes / 官方 releases，无随机。值得看的不是日期本身，是「壳名」一栏换了三次而「架构状态」一栏始终未变。重置后可重放。</div>
+    </div>
+    <p><b>一个改了三次名字的项目，为什么没有死？</b>把「改名」拆开看：第一次是法律强迫（商标太像 Claude），第二次是仓促补救，第三次是社区吵出来的。三次都动了壳，没一次动肉——自托管（跑在用户自己的机器上）、开源（任何人可审计）、凭证归用户（数据不进别人家的保险柜），这三根契约一根都没断。名字是壳，契约是肉。反过来想：一个只有名字没有契约的产品，改名一次就散了——2026 年的 agent 赛道上，这样的壳我们见过不少。</p>
+  </div>
+</section>
+
+<section class="chapter" id="ch2">
+  <div class="ch-head">
+    <div class="ch-num"><b>02</b>CHAPTER<br/>00:01</div>
+    <div class="ch-title">
+      <h2>四代家谱，一条分水岭</h2>
+      <p>「会做事的 AI」不是一代产品，是四代——分水岭只有一条：凭证和运行环境归谁</p>
+    </div>
+  </div>
+  <div class="ch-body">
+    <p class="lede">把 2026 年货架上所有「替你做事的 AI」摊开，家谱不该按公司画——公司会倒、会改名、会互相借模型（Microsoft 用 Anthropic 的模型做 Copilot Cowork 就是现成例子）。按<b>凭证和运行环境的归属</b>画，四代立刻清晰：</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>代</th><th>代表</th><th>跑在哪</th><th>凭证归谁</th><th>典型边界</th></tr>
+      <tr><td><b>第一代</b> 聊天 bot</td><td>ChatGPT、Claude.ai、豆包</td><td>厂商云</td><td>厂商</td><td>对话与云端工具，碰不到你的设备</td></tr>
+      <tr><td><b>第二代</b> 编程 agent</td><td>Claude Code、Codex、ZCode、OpenCode、DeepSeek Harness</td><td>你的终端/IDE</td><td>你（仓库级）</td><td>出不了代码圈：仓库是工作区</td></tr>
+      <tr><td><b>第三代</b> 云端 computer-use</td><td>Manus、Grok Bot（云端）</td><td>厂商虚拟机</td><td>厂商代持</td><td>替你操作，但在别人家的机器上</td></tr>
+      <tr><td><b>第四代</b> 个人 agent</td><td>OpenClaw、Hermes Agent</td><td><b>你自己的设备</b></td><td><b>你</b></td><td>渠道、记忆、定时任务、台账全在你家</td></tr>
+    </table></div>
+    <div class="fig"><div class="frame"><img src="assets/art/ch2.webp" alt="四扇并排木门各挂彩色门牌，第三扇半开透出暖光，折纸鸟捧着一大串钥匙辨认" width="1152" height="832" loading="lazy" style="width:100%;border:1px solid var(--line)"/></div><figcaption><span><b>FIG. 02</b> 四扇门四串凭证：分水岭不在门里有多少功能，在钥匙给谁</span><span>INK &amp; GOUACHE / 2026</span></figcaption></div>
+    <p>第二代的家族成员有一份现成的活证据。还记得 VOL.14 里那条 200 谎报的拒绝文案吗？渠道商把白名单写在正文里——<em>Codex、Claude Code、OpenCode、Magpie、DeepSeek Harness、ZCode、Pi、Oh My Pi</em>——八个名字全是终端形态的编程 agent。<b>渠道商已经替我们画好了第二代的家谱</b>：他们按客户端形态放行，因为这个家族共享同一种工作模式（在仓库里、以用户自己的额度）。</p>
+    <p>第四代则是 2026 年真正的新物种。它不只是「更聪明」——它有一套前三代都没有的器官：消息渠道矩阵（WhatsApp/Telegram/iMessage/Slack…）、设备配对、持久记忆、定时任务、技能市场、启动台账。VOL.14 里那些给我们惹祸的 boot 台账、profile 锁、设备配对表，全是这套器官的骨头。</p>
+    <p>同时，大厂在 2026 年给出了另一侧的时间线——收拢之年：</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>日期</th><th>事件</th><th>一句话</th></tr>
+      <tr><td>2026-01-12/13</td><td><b>Claude Cowork</b> 发布</td><td>面向非技术知识工作者的桌面通用 agent，官方插件生态 + 记忆</td></tr>
+      <tr><td>2026-03-09</td><td><b>Copilot Cowork</b> 发布</td><td>Microsoft 借 Anthropic 的 agentic 模型 + M365，企业托管</td></tr>
+      <tr><td>2026-07</td><td><b>ChatGPT Work</b> 推出</td><td>OpenAI 进入被 Cowork 占据的企业 agent 市场</td></tr>
+      <tr><td>2026-08-09</td><td><b>ChatGPT Atlas 关停</b></td><td>2025-10-21 上线的 agent 浏览器，寿命不足 10 个月</td></tr>
+      <tr><td>2026-10-21</td><td><b>Claude Duet</b> 研究预览</td><td>从被动响应走向主动式个人助理</td></tr>
+    </table></div>
+    <p>大厂在收拢（Operator 并回主应用、Atlas 关停、能力收进 ChatGPT/Codex），开源在分化（OpenClaw 的版本列车、Hermes 的新物种）。家谱的两条主干在朝相反方向生长。</p>
+    <div class="demo" id="d2">
+      <div class="demo-head"><span class="demo-tag">DEMO 02 · 代际分诊器</span><span class="demo-title">三问定代<span class="hint">点一张产品卡，看它落在第几代</span></span></div>
+      <div class="demo-body">
+        <div class="g2-cards">
+          <button class="g2-card" data-g="1">ChatGPT</button><button class="g2-card" data-g="1">Claude.ai</button><button class="g2-card" data-g="1">豆包</button>
+          <button class="g2-card" data-g="2">Claude Code</button><button class="g2-card" data-g="2">Codex</button><button class="g2-card" data-g="2">ZCode</button>
+          <button class="g2-card" data-g="3">Manus</button><button class="g2-card" data-g="3">Grok Bot（云端）</button>
+          <button class="g2-card" data-g="4">OpenClaw</button><button class="g2-card" data-g="4">Hermes Agent</button>
+        </div>
+        <div class="g2-q">
+          <div class="g2-qrow"><span>问一 · 跑在哪？</span><b id="g2-a1">——</b></div>
+          <div class="g2-qrow"><span>问二 · 凭证归谁？</span><b id="g2-a2">——</b></div>
+          <div class="g2-qrow"><span>问三 · 出勤谁负责？</span><b id="g2-a3">——</b></div>
+        </div>
+        <div class="readout"><span>判定：<b id="g2-verdict">点一张产品卡开始</b></span></div>
+        <div><button class="ghost" id="g2-reset">重置</button></div>
+      </div>
+      <div class="demo-foot">确定性判定：三问答案照抄本章家谱表；Grok Bot 按 2026-08 上线的云端 computer-use 口径归第三代。「第四代」的判定要点是三问同时归你——只归一项不算。判定表固定，可重放。</div>
+    </div>
+    <p><b>为什么分水岭是「凭证归属」而不是「谁更聪明」？</b>因为能力可以租，信任不能租。一个产品替你做事的深度，取决于你敢把多少凭证交给它；凭证交出去之后锁在谁的柜子里，决定了它在处理你最私人的任务时遵循谁的规则。聪明度每季度刷新一次，归属十年不动——所以预测一个产品的长期行为，看归属比看跑分准得多。</p>
+  </div>
+</section>
+
+<section class="chapter" id="ch3">
+  <div class="ch-head">
+    <div class="ch-num"><b>03</b>CHAPTER<br/>00:02</div>
+    <div class="ch-title">
+      <h2>同物种的两种进化</h2>
+      <p>OpenClaw 与 Hermes：同样的自托管、同样的开源，却往相反的方向跑</p>
+    </div>
+  </div>
+  <div class="ch-body">
+    <p class="lede">家谱第四代里有两个名字最像：同样的自托管、同样的 MIT/开源、同样的「替你做事」。OpenClaw 与 Hermes Agent（Nous Research，2026 年 2 月发布）像一对同物种，却在技能与记忆两条主干上长出了不同的器官。</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th></th><th>OpenClaw</th><th>Hermes Agent</th></tr>
+      <tr><td>出身</td><td>2026-01 定名（Clawdbot 2025-11 起家），社区接管</td><td>Nous Research，2026-02，MIT 一次到位</td></tr>
+      <tr><td>定位</td><td><b>常驻助理</b>：多渠道接入 + 渠道矩阵 + 设备配对</td><td><b>便携自进化</b>：从经验自造技能的学习闭环</td></tr>
+      <tr><td>技能</td><td>预置技能市场（ClawHub），预建技能更多</td><td>用得越多自己写得越多（learning loop）</td></tr>
+      <tr><td>效率</td><td>对比文口径：同任务省 10–20% token</td><td>运行成本更低</td></tr>
+      <tr><td>托管</td><td>无官方托管</td><td>可选 Hermes Cloud 常驻实例</td></tr>
+      <tr><td>蜕壳史</td><td>改名三次</td><td>一次到位</td></tr>
+    </table></div>
+    <div class="fig"><div class="frame"><img src="assets/art/ch3.webp" alt="两条环形跑道上两只折纸鸟：左边边跑边贴便签，右边端着装满工具的托盘平稳地跑" width="1152" height="832" loading="lazy" style="width:100%;border:1px solid var(--line)"/></div><figcaption><span><b>FIG. 03</b> 一只往墙上贴自己写的便签，一只端着别人验收过的托盘</span><span>INK &amp; GOUACHE / 2026</span></figcaption></div>
+    <p><b>两种进化为什么不合并？</b>关键在产出物的可审计性。学习闭环写出来的技能是它自己创作的——好用，但每一件都不可预先审计；而常驻助理的核心价值恰恰是可审计、可回滚：VOL.12 里那台巡检 Agent 的每道闸、VOL.14 里那张 boot 台账，逻辑都建立在「行为可以预先框定」上。往「越用越强」跑和往「越用越可信」跑是两个方向——硬合并，两边都要打折。</p>
+    <div class="note">Easel 的选择写在 VOL.10 和 VOL.14 里：借 OpenClaw 当底座，看中的是渠道矩阵、多模型路由和可审计的执行器。Hermes 的学习闭环是将来值得偷的思路，不是现在值得换的底座。</div>
+  </div>
+</section>
+
+<section class="chapter" id="ch4">
+  <div class="ch-head">
+    <div class="ch-num"><b>04</b>CHAPTER<br/>00:03</div>
+    <div class="ch-title">
+      <h2>大厂为什么不缝合</h2>
+      <p>Cowork 领跑、Atlas 关停：这个问题的答案在 2026 年不是推理，是实录</p>
+    </div>
+  </div>
+  <div class="ch-body">
+    <p class="lede">「把所有优点缝成一个产品」听上去像大厂迟早会做的事——他们有算力、人才、钱包。2026 年这一整年，四家大厂用四次不同方向的尝试，把答案写在了新闻里。结论先行：<b>缝合的失败不是能力失败，是形态失败</b>。</p>
+    <div class="fig"><div class="frame"><img src="assets/art/ch4.webp" alt="长餐桌上五盘风格迥异的招牌菜，任意两盘之间画着同极磁铁相斥符号，折纸鸟厨师双手摊开" width="1152" height="832" loading="lazy" style="width:100%;border:1px solid var(--line)"/></div><figcaption><span><b>FIG. 04</b> 五盘好菜推到一张桌上，盘与盘之间开始相斥</span><span>INK &amp; GOUACHE / 2026</span></figcaption></div>
+    <h3>四条结构性原因，条条有出处</h3>
+    <p><b>① 商业模式对立。</b>个人 agent 的核心优点——自托管、用你自己的 Key、凭证不出门——每一条都在瓦解订阅与推理计费。OpenClaw 没有官方托管（对比文原话），不是做不到，是不敢做：做了就变成自己卖自己的平替。所以大厂版的「个人 agent」全是云端形态：Claude Cowork 接记忆与插件，Copilot Cowork 挂 M365，全部可计费。</p>
+    <p><b>② 责任与合规。</b>用真实账号替人订票、发帖、支付，出错算谁的？开源社区可以说风险自担，大厂面对的是企业法务与监管。于是每个大厂版都要加审批流、沙箱、Watch Mode——每加一道闸，离「丝滑全能」远一步。</p>
+    <p><b>③ 优点互斥。</b>Hermes 的自进化不可预先审计，与企业级可审计冲突；OpenClaw 的多模型自由路由与单一供应商计费冲突；浏览器专项深度（browser-use 类）与平台广度冲突——专，是快的来源，也是合不进来的原因。</p>
+    <p><b>④ 集成复杂度。</b>每接一层别人的能力，就背一层别人的状态机——这句话的完整证据链在 VOL.14：boot 台账、profile 锁、PID 复用、渠道白名单、重试预算，五起事故全是缝合处的崩开。大厂内部算的账更直白：与其缝五家最好的部分背五份债，不如垂直整合自家一整套背一份债。</p>
+    <div class="demo" id="d3">
+      <div class="demo-head"><span class="demo-tag">DEMO 03 · 缝合冲突矩阵</span><span class="demo-title">选两样试试<span class="hint">点选两项能力，互斥就亮红</span></span></div>
+      <div class="demo-body">
+        <div class="g3-chips">
+          <button class="g3-chip" data-k="host">自托管</button>
+          <button class="g3-chip" data-k="learn">自进化学习闭环</button>
+          <button class="g3-chip" data-k="multi">多模型自由路由</button>
+          <button class="g3-chip" data-k="browser">浏览器专项深度</button>
+          <button class="g3-chip" data-k="audit">企业级可审计</button>
+          <button class="g3-chip" data-k="full">全权代理</button>
+        </div>
+        <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>conflict</span></div><pre id="g3-log">选中两项，看它们之间是握手还是相斥。</pre></div>
+        <div class="readout"><span>已选：<b id="g3-n">0/2</b></span><span>判定：<b id="g3-verdict">——</b></span></div>
+        <div><button class="ghost" id="g3-reset">重置</button></div>
+      </div>
+      <div class="demo-foot">确定性矩阵：互斥对与理由照抄本章①③两条（自进化↔可审计、自托管↔计费收拢、全权代理↔可审计、专项↔广度）；不互斥的组合给中性结论。判定固定，可重放。</div>
+    </div>
+    <p><b>Atlas 之死说明了什么？</b>一家最有资格「缝合」的公司（算力、人才、钱包全齐），把一个聚合了浏览器与 agent 的产品养了不足十个月，然后亲手关停，官方口径是「浏览器是功能，不是目的地」。这不是能力翻车——是形态翻车：<b>目的地决定形态，而大厂的目的地是收拢回主应用</b>，因为只有收拢才能计费。2026-07 推出 ChatGPT Work 补位企业市场、10 月 Anthropic 转向「主动式」的 Duet 研究预览——每一步都在收拢的方向上。市场图谱今年已收录约 150 家公司、16 个层级，而「全能缝合怪」在这个图谱里没有格子可放。</p>
+  </div>
+</section>
+
+<section class="chapter" id="ch5">
+  <div class="ch-head">
+    <div class="ch-num"><b>05</b>CHAPTER<br/>00:04</div>
+    <div class="ch-title">
+      <h2>我们站在哪</h2>
+      <p>家谱的最后一笔，是把自己画进去</p>
+    </div>
+  </div>
+  <div class="ch-body">
+    <p class="lede">家谱画完，必须回答的问题是：Easel 站在哪一格？答案在第四代的枝上——借个人 agent 当根系统（OpenClaw 的渠道矩阵、记忆、定时任务），长自己的垂直枝（社媒创作、发布、回执）。你的机器、你的凭证、你的台账——VOL.14 五起事故教会我们的每一条，都建立在第四代的归属之上。</p>
+    <p>而 VOL.14 的接入前三问（状态写在哪、怎么判活、重试上限在哪），在家谱面前可以补上第四问：<b>你要接的这家，在家谱第几代？</b>代际决定行为边界——第四代才替你管台账，第二代只管你的仓库，第三代在别人家的机器上替你操作。选底座、选渠道、选协作对象之前先对号入座，很多「期待落空」根本不会发生。</p>
+    <div class="demo" id="d4">
+      <div class="demo-head"><span class="demo-tag">DEMO 04 · 版本列车重放</span><span class="demo-title">OpenClaw release 审计链<span class="hint">逐站重放，每站一个对症修复</span></span></div>
+      <div class="demo-body">
+        <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>release-train</span></div><pre id="g4-log">2026.9.9 ──→ 2026.11.3，共 6 站。点「下一站」。</pre></div>
+        <div class="readout"><span>当前站：<b id="g4-v">2026.9.9</b></span><span>类别：<b id="g4-k">起点（Easel 内置版本）</b></span><span>对应痛点：<b id="g4-p">——</b></span></div>
+        <div><button class="ghost" id="g4-next">下一站</button> <button class="ghost" id="g4-reset">重置</button></div>
+      </div>
+      <div class="demo-foot">确定性重放：各站修复描述照抄官方 releases 页（2026.9.37 extended-stable / 10.9 安全补丁季 / 10.10 Gateway 流式防卡死 / 11.1 Provider 恢复节奏 / 11.2 Codex 连续性 / 11.3 限额错误不消耗重试预算）；「对应痛点」列为本文视角（呼应 VOL.14）。重置后可重放。</div>
+    </div>
+    <div class="rules">
+      <div class="rule"><b>LINEAGE 01 · 修家谱先画分水岭</b><p>凭证和运行环境归谁，比功能清单更能预测一个产品的行为——功能每季度刷新，归属十年不动。选型先对号入座，再谈跑分。</p></div>
+      <div class="rule"><b>LINEAGE 02 · 名字会蜕三次壳，契约一次不能死</b><p>Clawdbot→Moltbot→OpenClaw 三次改名三次活，靠的是自托管、开源、凭证归你三根契约。只有名字没有契约的产品，改名一次就散。</p></div>
+      <div class="rule"><b>LINEAGE 03 · 收拢与分化是同一枚硬币</b><p>大厂每收拢一格（Atlas 关停、Operator 并回主应用），本地系就多一台状态机要学、多一块空地要占——这不是口号，是 2026 年家谱上量出来的位移。</p></div>
+    </div>
+    <p>这篇没解决的：Hermes 学习闭环实测（未上手，不做纸面评判）；ClawHub 技能生态的逐项盘点；国内系（夸克、Tabbit）暂不入谱——凭证模型不透明，家谱宁缺一行，不猜一格。</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="wrap site-foot">
+  <div>
+    <div>造物手记 VOL.15 · 给 Agent 修家谱</div>
+    <div style="margin-top:5px">GENEALOGY CHART / 2026.11 / 单文件 · 零依赖 · 确定性小样</div>
+  </div>
+  <div class="foot-note">本篇为生态盘点，非代码解剖：日期与事件核对到 OpenClaw 官方 releases、Wikipedia（OpenClaw）、Forbes（2026-01-30）、Fortune、Firecrawl / innfactory / Composio 对比文与 Nous Research 官方页；大厂时间线（Cowork 2026-01-12、Copilot Cowork 2026-03-09、ChatGPT Work 2026-07、Atlas 关停 2026-08-09、Duet 2026-10-21）逐条有出处。四枚小样为确定性模型：时间线、判定表、互斥矩阵照抄文中表格。字体为 LXGW 文楷（OFL 许可，见 assets/fonts/OFL.txt）。插图由 GPT 系图像模型生成。</div>
+</footer>
+
+<script>
+'use strict';
+/* ---------- DEMO 01 · 三级跳时间线（七站确定性序列） ---------- */
+(function(){
+  var stops=[
+    {d:'2025-11',n:'Clawdbot 发布',note:'Peter Steinberger 发布开源个人 agent；「AI 该替你做事，不该只会聊天」',shell:'Clawdbot'},
+    {d:'2026-01',n:'病毒式爆红',note:'「真的会做事」出圈；商标压力随之而来',shell:'Clawdbot'},
+    {d:'2026-01-27',n:'改名 Moltbot',note:'仓促改名；作者后来自认「不太顺口」',shell:'Moltbot'},
+    {d:'2026-01-30',n:'改名 OpenClaw',note:'社区争议、域名被抢注；龙虾 🦞 定妆',shell:'OpenClaw'},
+    {d:'2026-03',n:'正式公开发布',note:'「The lobster way」；自托管 + 开源 + 凭证归你',shell:'OpenClaw'},
+    {d:'2026 中',n:'作者被 OpenAI 挖走',note:'项目社区接管，release 列车照常发车',shell:'OpenClaw'},
+    {d:'2026-11-11',n:'版本列车 2026.11.3',note:'另有 2026.9.37 extended-stable LTS 线（见 DEMO 04）',shell:'OpenClaw'}
+  ];
+  var i=0, log=document.getElementById('g1-log');
+  document.getElementById('g1-next').addEventListener('click',function(){
+    if(i>=stops.length) return;
+    var s=stops[i];
+    log.textContent += (i===0?'':+'\n') + (i===0?'':'\n') + '['+s.d+'] '+s.n+' — '+s.note;
+    document.getElementById('g1-date').textContent=s.d;
+    document.getElementById('g1-name').textContent=s.n;
+    document.getElementById('g1-note').textContent=s.note;
+    document.getElementById('g1-shell').textContent=s.shell;
+    i++;
+    if(i>=stops.length) this.disabled=true;
+  });
+  document.getElementById('g1-reset').addEventListener('click',function(){
+    i=0; log.textContent='2025-11 ──→ 2026-11-11，共 7 站。点「下一站」。';
+    var s=stops[0];
+    document.getElementById('g1-date').textContent=s.d;
+    document.getElementById('g1-name').textContent=s.n;
+    document.getElementById('g1-note').textContent=s.note;
+    document.getElementById('g1-shell').textContent=s.shell;
+    this.parentNode.querySelector('#g1-next').disabled=false;
+  });
+})();
+
+/* ---------- DEMO 02 · 代际分诊器（确定性判定表） ---------- */
+(function(){
+  var table={
+    '1':{run:'厂商云',cred:'厂商',duty:'厂商按订阅出勤',v:'第一代 · 聊天 bot'},
+    '2':{run:'你的终端/IDE',cred:'你（仓库级）',duty:'你发起，它执行',v:'第二代 · 编程 agent'},
+    '3':{run:'厂商虚拟机',cred:'厂商代持',duty:'厂商运维，你在门外看',v:'第三代 · 云端 computer-use'},
+    '4':{run:'你自己的设备',cred:'你',duty:'你（常驻，台账在你家）',v:'第四代 · 个人 agent'}
+  };
+  var cards=document.querySelectorAll('.g2-card');
+  cards.forEach(function(c){
+    c.addEventListener('click',function(){
+      cards.forEach(function(x){x.classList.remove('hot');});
+      c.classList.add('hot');
+      var g=c.dataset.g, t=table[g];
+      document.getElementById('g2-a1').textContent=t.run;
+      document.getElementById('g2-a2').textContent=t.cred;
+      document.getElementById('g2-a3').textContent=t.duty;
+      document.getElementById('g2-verdict').textContent=t.v;
+    });
+  });
+  document.getElementById('g2-reset').addEventListener('click',function(){
+    cards.forEach(function(x){x.classList.remove('hot');});
+    ['g2-a1','g2-a2','g2-a3','g2-verdict'].forEach(function(id){document.getElementById(id).textContent = id==='g2-verdict'?'点一张产品卡开始':'——';});
+  });
+})();
+
+/* ---------- DEMO 03 · 缝合冲突矩阵（固定互斥对） ---------- */
+(function(){
+  var sel=[];
+  var pairs={
+    'audit+learn':'相斥：自进化写出的技能不可预先审计，企业级可审计要求行为可预先框定——合并即两伤（第三章）。',
+    'audit+host':'相斥：自托管用你自己的 Key、凭证不出门，企业级沙箱计费要求收拢回主应用——商业模式对立（第四章①）。',
+    'audit+full':'相斥：全权代理的每一步若都要预先审计，就不是全权；可审计的全权只剩审批流版（第四章②）。',
+    'audit+multi':'相斥：多模型自由路由的退避与预算分散在各家节奏里，单一可审计口径难成立（VOL.14 第五章的重试分诊）。',
+    'audit+browser':'相斥：浏览器专项深度来自只做浏览器；平台广度稀释专项优化（第四章③）。',
+    'host+multi':'相斥：多模型自由路由用你自己的 Key，断了收拢计费的路——这正是自托管的一部分，二者一致但都与「大厂缝合版」无缘。'
+  };
+  function key(){ return sel.slice().sort().join('+'); }
+  function refresh(){
+    document.querySelectorAll('.g3-chip').forEach(function(c){
+      c.classList.toggle('hot', sel.indexOf(c.dataset.k)>=0);
+    });
+    document.getElementById('g3-n').textContent=sel.length+'/2';
+    var v=document.getElementById('g3-verdict'), log=document.getElementById('g3-log');
+    if(sel.length<2){ v.textContent='——'; v.className=''; log.textContent='选中两项，看它们之间是握手还是相斥。'; return; }
+    var k=key(), hit=pairs[k];
+    if(hit){ v.textContent='相斥'; v.className='bad'; log.textContent='['+sel.join(' + ')+']\n'+hit; }
+    else{ v.textContent='可共存（但注意第④条集成债）'; v.className=''; log.textContent='['+sel.join(' + ')+']\n不互斥。它们可以住进同一个产品——代价见 VOL.14：每接一层能力，背一层状态机。'; }
+  }
+  document.querySelectorAll('.g3-chip').forEach(function(c){
+    c.addEventListener('click',function(){
+      var k=c.dataset.k, idx=sel.indexOf(k);
+      if(idx>=0){ sel.splice(idx,1); } else { if(sel.length>=2) sel.shift(); sel.push(k); }
+      refresh();
+    });
+  });
+  document.getElementById('g3-reset').addEventListener('click',function(){ sel=[]; refresh(); });
+})();
+
+/* ---------- DEMO 04 · 版本列车重放（release 审计链，六站） ---------- */
+(function(){
+  var stops=[
+    {v:'2026.9.9',k:'起点',p:'Easel 内置版本（VOL.14 五起事故发生在这条线上）',log:'[start] Easel .tools 内置 2026.9.9 —— 本文五起事故的运行基线'},
+    {v:'2026.9.37',k:'extended-stable（LTS 线）',p:'Windows 状态路径别名误判「离线维护」→ 已修',log:'[9.37] Windows 等价路径保留同一状态归属；九月线安全与可靠性汇总'},
+    {v:'2026.10.9',k:'安全补丁季',p:'fast-uri/MSAL 凭证边界 —— 渠道白名单问题的上游侧',log:'[10.9] 运行时依赖安全补丁 + 凭证脱敏 + 恢复路径加固'},
+    {v:'2026.10.10',k:'Gateway 流式防卡死',p:'含工具调用样式的回复不再卡死网关',log:'[10.10] 回复含工具调用样 XML / 长 HTML 截断不再 stall Gateway'},
+    {v:'2026.11.1',k:'Provider 恢复节奏',p:'限流退避跟随对方节奏，不再本地堆积数小时',log:'[11.1] rate-limit cooldowns follow provider timing'},
+    {v:'2026.11.3',k:'限额错误不消耗重试预算',p:'识别限额类错误，不再无脑重试——对应 VOL.14 的 31 发循环',log:'[11.3] Recognize exhausted usage-limit errors without spending the transient rate-limit retry budget'}
+  ];
+  var i=0, log=document.getElementById('g4-log');
+  document.getElementById('g4-next').addEventListener('click',function(){
+    if(i>=stops.length) return;
+    var s=stops[i];
+    log.textContent += (i===0?'':'\n') + '['+s.v+'] '+s.k+' — '+s.p;
+    document.getElementById('g4-v').textContent=s.v;
+    document.getElementById('g4-k').textContent=s.k;
+    document.getElementById('g4-p').textContent=s.p;
+    i++;
+    if(i>=stops.length) this.disabled=true;
+  });
+  document.getElementById('g4-reset').addEventListener('click',function(){
+    i=0; log.textContent='2026.9.9 ──→ 2026.11.3，共 6 站。点「下一站」。';
+    document.getElementById('g4-v').textContent='2026.9.9';
+    document.getElementById('g4-k').textContent='起点（Easel 内置版本）';
+    document.getElementById('g4-p').textContent='——';
+    this.parentNode.querySelector('#g4-next').disabled=false;
+  });
+})();
+</script>
+</body>
+</html>
