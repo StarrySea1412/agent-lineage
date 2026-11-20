@@ -4,8 +4,8 @@
 <meta charset="UTF-8"/>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Ccircle cx=%2212%22 cy=%2211%22 r=%223%22 fill=%22%233e6e8e%22/%3E%3Ccircle cx=%227%22 cy=%2218%22 r=%222.2%22 fill=%22%23b5482a%22/%3E%3Ccircle cx=%2217%22 cy=%2218%22 r=%222.2%22 fill=%22%233e6e8e%22/%3E%3Cpath d=%22M12 14l-4.4 5.2M12 14l4.4 5.2%22 stroke=%22%23333e48%22/%3E%3C/svg%3E"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="description" content="造物手记 VOL.15 · 给 Agent 修家谱——从 Clawdbot 到 OpenClaw 的三级跳，到 Cowork 们的收拢与 Atlas 的关停：四代家谱、一条分水岭、四条为什么不缝合的结构性原因。"/>
-<title>给 Agent 修家谱 · 造物手记 VOL.15</title>
+<meta name="description" content="造物手记 VOL.21 · 给 Agent 修家谱——从 Clawdbot 到 OpenClaw 的三级跳，到 Cowork 们的收拢与 Atlas 的关停：四代家谱、一条分水岭、四条为什么不缝合的结构性原因。"/>
+<title>给 Agent 修家谱 · 造物手记 VOL.21</title>
 <style>
 /* 《住进机房的 Agent》· 造物手记 VOL.12
    机架走线图：机房纸、石墨蓝黑、安全橙、LED 绿 —— 一面挂满巡检面板的机架立面。 */
@@ -358,7 +358,7 @@ input[type=text]:focus,select:focus{outline:2px solid var(--signal);outline-offs
 }
 
 
-/* ---- VOL.15 小样专属 ---- */
+/* ---- VOL.21 小样专属 ---- */
 .term{background:var(--code-bg);border-radius:8px;overflow:hidden;border:1px solid var(--line)}
 .term-bar{display:flex;align-items:center;gap:6px;padding:7px 12px;background:rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.08)}
 .term-bar i{width:9px;height:9px;border-radius:50%;background:var(--line-strong);display:inline-block}
@@ -395,11 +395,11 @@ input[type=text]:focus,select:focus{outline:2px solid var(--signal);outline-offs
 <header class="wrap masthead">
   <div class="brand">
     <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6" r="2.6" stroke="#333e48" stroke-width="1.4"/><circle cx="6.5" cy="17" r="2.6" stroke="#333e48" stroke-width="1.4"/><circle cx="17.5" cy="17" r="2.6" stroke="#333e48" stroke-width="1.4"/><path d="M10.8 8.2 7.6 14.8M13.2 8.2l3.2 6.6" stroke="#333e48" stroke-width="1.1"/></svg></span>
-    <span>造物手记 <small>VOL.15</small></span>
+    <span>造物手记 <small>VOL.21</small></span>
   </div>
   <div class="edition">
     <span class="pack"><i class="pack-dot" aria-hidden="true"></i>GENEALOGY CHART / 谱系图</span>
-    <span>BOARD 15 · 2026.11</span>
+    <span>BOARD 21 · 2026.11</span>
   </div>
 </header>
 
@@ -423,12 +423,12 @@ input[type=text]:focus,select:focus{outline:2px solid var(--signal);outline-offs
       <div class="screen-img">
         <img src="assets/art/hero.webp" alt="单眼折纸鸟族谱绘制员站在家谱墙前，墙上相框里是龙虾、纸鹤、云朵、终端四种小机器肖像，鸟持教杆指向龙虾相框" width="1152" height="832"/>
       </div>
-      <div class="tc-bar"><span>BOARD 15</span><span class="tc">ORIGIN · FOUR GENERATIONS · TWO EVOLUTIONS · BIG TECH</span></div>
+      <div class="tc-bar"><span>BOARD 21</span><span class="tc">ORIGIN · FOUR GENERATIONS · TWO EVOLUTIONS · BIG TECH</span></div>
     </div>
     <figcaption><span><b>FIG. 00</b> 一面家谱墙：每个相框里住着一种「替你做事」的形态</span><span>INK &amp; GOUACHE / 2026</span></figcaption>
   </figure>
   <div>
-    <p class="dek" style="margin-top:26px">画这张家谱的动机不是怀旧。2026 年 11 月的今天，"AI 会做事"已经从口号变成货架：上游 OpenClaw 的版本列车开到了 2026.11.3，我们的 Easel 就停靠在它的分支线上（VOL.14 的五起事故还挂在台账上）。要在这样的年份里决定「接谁的底座、跟哪条线走」，先得有一张谱——不然每次选型都像第一次见到这个东西。</p>
+    <p class="dek" style="margin-top:26px">画这张家谱的动机不是怀旧。2026 年 11 月的今天，"AI 会做事"已经从口号变成货架：上游 OpenClaw 的版本列车开到了 2026.11.3，我们的 Easel 就停靠在它的分支线上（VOL.22 的五起事故还挂在台账上）。要在这样的年份里决定「接谁的底座、跟哪条线走」，先得有一张谱——不然每次选型都像第一次见到这个东西。</p>
     <p class="scope">标本 · 本篇为生态盘点，非代码解剖；全部日期与事件核对到官方 releases、Wikipedia、Forbes/Fortune 报道与对比文（Firecrawl / innfactory / Composio），口径详见各章标注。<br/>四枚小样全部确定性：时间线、判定表、互斥矩阵均照抄文中表格，参数摊在明面上，可重置重放。</p>
     <div class="toc-head"><span>CONTENTS · 五段谱系</span><span>ORIGIN → FOUR GENERATIONS → TWO EVOLUTIONS → BIG TECH → OUR BRANCH</span></div>
     <nav class="toc">
@@ -506,8 +506,8 @@ input[type=text]:focus,select:focus{outline:2px solid var(--signal);outline-offs
       <tr><td><b>第四代</b> 个人 agent</td><td>OpenClaw、Hermes Agent</td><td><b>你自己的设备</b></td><td><b>你</b></td><td>渠道、记忆、定时任务、台账全在你家</td></tr>
     </table></div>
     <div class="fig"><div class="frame"><img src="assets/art/ch2.webp" alt="四扇并排木门各挂彩色门牌，第三扇半开透出暖光，折纸鸟捧着一大串钥匙辨认" width="1152" height="832" loading="lazy" style="width:100%;border:1px solid var(--line)"/></div><figcaption><span><b>FIG. 02</b> 四扇门四串凭证：分水岭不在门里有多少功能，在钥匙给谁</span><span>INK &amp; GOUACHE / 2026</span></figcaption></div>
-    <p>第二代的家族成员有一份现成的活证据。还记得 VOL.14 里那条 200 谎报的拒绝文案吗？渠道商把白名单写在正文里——<em>Codex、Claude Code、OpenCode、Magpie、DeepSeek Harness、ZCode、Pi、Oh My Pi</em>——八个名字全是终端形态的编程 agent。<b>渠道商已经替我们画好了第二代的家谱</b>：他们按客户端形态放行，因为这个家族共享同一种工作模式（在仓库里、以用户自己的额度）。</p>
-    <p>第四代则是 2026 年真正的新物种。它不只是「更聪明」——它有一套前三代都没有的器官：消息渠道矩阵（WhatsApp/Telegram/iMessage/Slack…）、设备配对、持久记忆、定时任务、技能市场、启动台账。VOL.14 里那些给我们惹祸的 boot 台账、profile 锁、设备配对表，全是这套器官的骨头。</p>
+    <p>第二代的家族成员有一份现成的活证据。还记得 VOL.22 里那条 200 谎报的拒绝文案吗？渠道商把白名单写在正文里——<em>Codex、Claude Code、OpenCode、Magpie、DeepSeek Harness、ZCode、Pi、Oh My Pi</em>——八个名字全是终端形态的编程 agent。<b>渠道商已经替我们画好了第二代的家谱</b>：他们按客户端形态放行，因为这个家族共享同一种工作模式（在仓库里、以用户自己的额度）。</p>
+    <p>第四代则是 2026 年真正的新物种。它不只是「更聪明」——它有一套前三代都没有的器官：消息渠道矩阵（WhatsApp/Telegram/iMessage/Slack…）、设备配对、持久记忆、定时任务、技能市场、启动台账。VOL.22 里那些给我们惹祸的 boot 台账、profile 锁、设备配对表，全是这套器官的骨头。</p>
     <p>同时，大厂在 2026 年给出了另一侧的时间线——收拢之年：</p>
     <div class="tbl-wrap"><table class="tbl">
       <tr><th>日期</th><th>事件</th><th>一句话</th></tr>
@@ -561,8 +561,8 @@ input[type=text]:focus,select:focus{outline:2px solid var(--signal);outline-offs
       <tr><td>蜕壳史</td><td>改名三次</td><td>一次到位</td></tr>
     </table></div>
     <div class="fig"><div class="frame"><img src="assets/art/ch3.webp" alt="两条环形跑道上两只折纸鸟：左边边跑边贴便签，右边端着装满工具的托盘平稳地跑" width="1152" height="832" loading="lazy" style="width:100%;border:1px solid var(--line)"/></div><figcaption><span><b>FIG. 03</b> 一只往墙上贴自己写的便签，一只端着别人验收过的托盘</span><span>INK &amp; GOUACHE / 2026</span></figcaption></div>
-    <p><b>两种进化为什么不合并？</b>关键在产出物的可审计性。学习闭环写出来的技能是它自己创作的——好用，但每一件都不可预先审计；而常驻助理的核心价值恰恰是可审计、可回滚：VOL.12 里那台巡检 Agent 的每道闸、VOL.14 里那张 boot 台账，逻辑都建立在「行为可以预先框定」上。往「越用越强」跑和往「越用越可信」跑是两个方向——硬合并，两边都要打折。</p>
-    <div class="note">Easel 的选择写在 VOL.10 和 VOL.14 里：借 OpenClaw 当底座，看中的是渠道矩阵、多模型路由和可审计的执行器。Hermes 的学习闭环是将来值得偷的思路，不是现在值得换的底座。</div>
+    <p><b>两种进化为什么不合并？</b>关键在产出物的可审计性。学习闭环写出来的技能是它自己创作的——好用，但每一件都不可预先审计；而常驻助理的核心价值恰恰是可审计、可回滚：VOL.12 里那台巡检 Agent 的每道闸、VOL.22 里那张 boot 台账，逻辑都建立在「行为可以预先框定」上。往「越用越强」跑和往「越用越可信」跑是两个方向——硬合并，两边都要打折。</p>
+    <div class="note">Easel 的选择写在 VOL.10 和 VOL.22 里：借 OpenClaw 当底座，看中的是渠道矩阵、多模型路由和可审计的执行器。Hermes 的学习闭环是将来值得偷的思路，不是现在值得换的底座。</div>
   </div>
 </section>
 
@@ -581,7 +581,7 @@ input[type=text]:focus,select:focus{outline:2px solid var(--signal);outline-offs
     <p><b>① 商业模式对立。</b>个人 agent 的核心优点——自托管、用你自己的 Key、凭证不出门——每一条都在瓦解订阅与推理计费。OpenClaw 没有官方托管（对比文原话），不是做不到，是不敢做：做了就变成自己卖自己的平替。所以大厂版的「个人 agent」全是云端形态：Claude Cowork 接记忆与插件，Copilot Cowork 挂 M365，全部可计费。</p>
     <p><b>② 责任与合规。</b>用真实账号替人订票、发帖、支付，出错算谁的？开源社区可以说风险自担，大厂面对的是企业法务与监管。于是每个大厂版都要加审批流、沙箱、Watch Mode——每加一道闸，离「丝滑全能」远一步。</p>
     <p><b>③ 优点互斥。</b>Hermes 的自进化不可预先审计，与企业级可审计冲突；OpenClaw 的多模型自由路由与单一供应商计费冲突；浏览器专项深度（browser-use 类）与平台广度冲突——专，是快的来源，也是合不进来的原因。</p>
-    <p><b>④ 集成复杂度。</b>每接一层别人的能力，就背一层别人的状态机——这句话的完整证据链在 VOL.14：boot 台账、profile 锁、PID 复用、渠道白名单、重试预算，五起事故全是缝合处的崩开。大厂内部算的账更直白：与其缝五家最好的部分背五份债，不如垂直整合自家一整套背一份债。</p>
+    <p><b>④ 集成复杂度。</b>每接一层别人的能力，就背一层别人的状态机——这句话的完整证据链在 VOL.22：boot 台账、profile 锁、PID 复用、渠道白名单、重试预算，五起事故全是缝合处的崩开。大厂内部算的账更直白：与其缝五家最好的部分背五份债，不如垂直整合自家一整套背一份债。</p>
     <div class="demo" id="d3">
       <div class="demo-head"><span class="demo-tag">DEMO 03 · 缝合冲突矩阵</span><span class="demo-title">选两样试试<span class="hint">点选两项能力，互斥就亮红</span></span></div>
       <div class="demo-body">
@@ -612,8 +612,8 @@ input[type=text]:focus,select:focus{outline:2px solid var(--signal);outline-offs
     </div>
   </div>
   <div class="ch-body">
-    <p class="lede">家谱画完，必须回答的问题是：Easel 站在哪一格？答案在第四代的枝上——借个人 agent 当根系统（OpenClaw 的渠道矩阵、记忆、定时任务），长自己的垂直枝（社媒创作、发布、回执）。你的机器、你的凭证、你的台账——VOL.14 五起事故教会我们的每一条，都建立在第四代的归属之上。</p>
-    <p>而 VOL.14 的接入前三问（状态写在哪、怎么判活、重试上限在哪），在家谱面前可以补上第四问：<b>你要接的这家，在家谱第几代？</b>代际决定行为边界——第四代才替你管台账，第二代只管你的仓库，第三代在别人家的机器上替你操作。选底座、选渠道、选协作对象之前先对号入座，很多「期待落空」根本不会发生。</p>
+    <p class="lede">家谱画完，必须回答的问题是：Easel 站在哪一格？答案在第四代的枝上——借个人 agent 当根系统（OpenClaw 的渠道矩阵、记忆、定时任务），长自己的垂直枝（社媒创作、发布、回执）。你的机器、你的凭证、你的台账——VOL.22 五起事故教会我们的每一条，都建立在第四代的归属之上。</p>
+    <p>而 VOL.22 的接入前三问（状态写在哪、怎么判活、重试上限在哪），在家谱面前可以补上第四问：<b>你要接的这家，在家谱第几代？</b>代际决定行为边界——第四代才替你管台账，第二代只管你的仓库，第三代在别人家的机器上替你操作。选底座、选渠道、选协作对象之前先对号入座，很多「期待落空」根本不会发生。</p>
     <div class="demo" id="d4">
       <div class="demo-head"><span class="demo-tag">DEMO 04 · 版本列车重放</span><span class="demo-title">OpenClaw release 审计链<span class="hint">逐站重放，每站一个对症修复</span></span></div>
       <div class="demo-body">
@@ -621,7 +621,7 @@ input[type=text]:focus,select:focus{outline:2px solid var(--signal);outline-offs
         <div class="readout"><span>当前站：<b id="g4-v">2026.9.9</b></span><span>类别：<b id="g4-k">起点（Easel 内置版本）</b></span><span>对应痛点：<b id="g4-p">——</b></span></div>
         <div><button class="ghost" id="g4-next">下一站</button> <button class="ghost" id="g4-reset">重置</button></div>
       </div>
-      <div class="demo-foot">确定性重放：各站修复描述照抄官方 releases 页（2026.9.37 extended-stable / 10.9 安全补丁季 / 10.10 Gateway 流式防卡死 / 11.1 Provider 恢复节奏 / 11.2 Codex 连续性 / 11.3 限额错误不消耗重试预算）；「对应痛点」列为本文视角（呼应 VOL.14）。重置后可重放。</div>
+      <div class="demo-foot">确定性重放：各站修复描述照抄官方 releases 页（2026.9.37 extended-stable / 10.9 安全补丁季 / 10.10 Gateway 流式防卡死 / 11.1 Provider 恢复节奏 / 11.2 Codex 连续性 / 11.3 限额错误不消耗重试预算）；「对应痛点」列为本文视角（呼应 VOL.22）。重置后可重放。</div>
     </div>
     <div class="rules">
       <div class="rule"><b>LINEAGE 01 · 修家谱先画分水岭</b><p>凭证和运行环境归谁，比功能清单更能预测一个产品的行为——功能每季度刷新，归属十年不动。选型先对号入座，再谈跑分。</p></div>
@@ -636,8 +636,9 @@ input[type=text]:focus,select:focus{outline:2px solid var(--signal);outline-offs
 
 <footer class="wrap site-foot">
   <div>
-    <div>造物手记 VOL.15 · 给 Agent 修家谱</div>
+    <div>造物手记 VOL.21 · 给 Agent 修家谱</div>
     <div style="margin-top:5px">GENEALOGY CHART / 2026.11 / 单文件 · 零依赖 · 确定性小样</div>
+    <div style="margin-top:10px"><a href="https://starrysea1412.github.io/imagestudio-story/">← VOL.20 等一张图显影</a> · <a href="https://starrysea1412.github.io/makers-notebook/">☰ 全系列目录</a> · <a href="https://starrysea1412.github.io/agent-borrowed-states/">VOL.22 借来的状态机 →</a></div>
   </div>
   <div class="foot-note">本篇为生态盘点，非代码解剖：日期与事件核对到 OpenClaw 官方 releases、Wikipedia（OpenClaw）、Forbes（2026-01-30）、Fortune、Firecrawl / innfactory / Composio 对比文与 Nous Research 官方页；大厂时间线（Cowork 2026-01-12、Copilot Cowork 2026-03-09、ChatGPT Work 2026-07、Atlas 关停 2026-08-09、Duet 2026-10-21）逐条有出处。四枚小样为确定性模型：时间线、判定表、互斥矩阵照抄文中表格。字体为 LXGW 文楷（OFL 许可，见 assets/fonts/OFL.txt）。插图由 GPT 系图像模型生成。</div>
 </footer>
@@ -711,7 +712,7 @@ input[type=text]:focus,select:focus{outline:2px solid var(--signal);outline-offs
     'audit+learn':'相斥：自进化写出的技能不可预先审计，企业级可审计要求行为可预先框定——合并即两伤（第三章）。',
     'audit+host':'相斥：自托管用你自己的 Key、凭证不出门，企业级沙箱计费要求收拢回主应用——商业模式对立（第四章①）。',
     'audit+full':'相斥：全权代理的每一步若都要预先审计，就不是全权；可审计的全权只剩审批流版（第四章②）。',
-    'audit+multi':'相斥：多模型自由路由的退避与预算分散在各家节奏里，单一可审计口径难成立（VOL.14 第五章的重试分诊）。',
+    'audit+multi':'相斥：多模型自由路由的退避与预算分散在各家节奏里，单一可审计口径难成立（VOL.22 第五章的重试分诊）。',
     'audit+browser':'相斥：浏览器专项深度来自只做浏览器；平台广度稀释专项优化（第四章③）。',
     'host+multi':'相斥：多模型自由路由用你自己的 Key，断了收拢计费的路——这正是自托管的一部分，二者一致但都与「大厂缝合版」无缘。'
   };
@@ -725,7 +726,7 @@ input[type=text]:focus,select:focus{outline:2px solid var(--signal);outline-offs
     if(sel.length<2){ v.textContent='——'; v.className=''; log.textContent='选中两项，看它们之间是握手还是相斥。'; return; }
     var k=key(), hit=pairs[k];
     if(hit){ v.textContent='相斥'; v.className='bad'; log.textContent='['+sel.join(' + ')+']\n'+hit; }
-    else{ v.textContent='可共存（但注意第④条集成债）'; v.className=''; log.textContent='['+sel.join(' + ')+']\n不互斥。它们可以住进同一个产品——代价见 VOL.14：每接一层能力，背一层状态机。'; }
+    else{ v.textContent='可共存（但注意第④条集成债）'; v.className=''; log.textContent='['+sel.join(' + ')+']\n不互斥。它们可以住进同一个产品——代价见 VOL.22：每接一层能力，背一层状态机。'; }
   }
   document.querySelectorAll('.g3-chip').forEach(function(c){
     c.addEventListener('click',function(){
@@ -740,12 +741,12 @@ input[type=text]:focus,select:focus{outline:2px solid var(--signal);outline-offs
 /* ---------- DEMO 04 · 版本列车重放（release 审计链，六站） ---------- */
 (function(){
   var stops=[
-    {v:'2026.9.9',k:'起点',p:'Easel 内置版本（VOL.14 五起事故发生在这条线上）',log:'[start] Easel .tools 内置 2026.9.9 —— 本文五起事故的运行基线'},
+    {v:'2026.9.9',k:'起点',p:'Easel 内置版本（VOL.22 五起事故发生在这条线上）',log:'[start] Easel .tools 内置 2026.9.9 —— 本文五起事故的运行基线'},
     {v:'2026.9.37',k:'extended-stable（LTS 线）',p:'Windows 状态路径别名误判「离线维护」→ 已修',log:'[9.37] Windows 等价路径保留同一状态归属；九月线安全与可靠性汇总'},
     {v:'2026.10.9',k:'安全补丁季',p:'fast-uri/MSAL 凭证边界 —— 渠道白名单问题的上游侧',log:'[10.9] 运行时依赖安全补丁 + 凭证脱敏 + 恢复路径加固'},
     {v:'2026.10.10',k:'Gateway 流式防卡死',p:'含工具调用样式的回复不再卡死网关',log:'[10.10] 回复含工具调用样 XML / 长 HTML 截断不再 stall Gateway'},
     {v:'2026.11.1',k:'Provider 恢复节奏',p:'限流退避跟随对方节奏，不再本地堆积数小时',log:'[11.1] rate-limit cooldowns follow provider timing'},
-    {v:'2026.11.3',k:'限额错误不消耗重试预算',p:'识别限额类错误，不再无脑重试——对应 VOL.14 的 31 发循环',log:'[11.3] Recognize exhausted usage-limit errors without spending the transient rate-limit retry budget'}
+    {v:'2026.11.3',k:'限额错误不消耗重试预算',p:'识别限额类错误，不再无脑重试——对应 VOL.22 的 31 发循环',log:'[11.3] Recognize exhausted usage-limit errors without spending the transient rate-limit retry budget'}
   ];
   var i=0, log=document.getElementById('g4-log');
   document.getElementById('g4-next').addEventListener('click',function(){
